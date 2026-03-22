@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="API Documentation | ReportMate" description="Interactive REST API reference for the ReportMate endpoint management platform">
+  <div class="mx-auto max-w-6xl px-6 py-12">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">API Documentation</h1>
+      <p class="mt-2 text-gray-600">
+        Interactive reference for the ReportMate REST API. All endpoints require authentication via
+        <code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">X-Client-Passphrase</code> header.
+      </p>
+      <div class="mt-4 flex gap-3">
+        <a
+          href="https://api.reportmate.app/docs"
+          class="inline-flex items-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Swagger UI
+        </a>
+        <a
+          href="https://api.reportmate.app/redoc"
+          class="inline-flex items-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          ReDoc
+        </a>
+        <a
+          href="https://api.reportmate.app/openapi.json"
+          class="inline-flex items-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          OpenAPI Spec (JSON)
+        </a>
+      </div>
+    </div>
+
+    <div id="scalar-api-reference"></div>
+  </div>
+
+  <script is:inline>
+    // Load Scalar API reference
+    (function() {
+      var script = document.createElement('script');
+      script.id = 'scalar-script';
+      script.src = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference';
+      script.dataset.url = 'https://api.reportmate.app/openapi.json';
+      script.dataset.proxyUrl = '';
+      document.getElementById('scalar-api-reference').appendChild(script);
+    })();
+  </script>
+</Layout>
