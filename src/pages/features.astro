@@ -1,0 +1,98 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Features - ReportMate" description="Full feature breakdown of ReportMate endpoint management">
+  <section class="py-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="text-center">
+        <h1 class="text-4xl font-bold text-gray-900">Features</h1>
+        <p class="mt-4 text-lg text-gray-600">
+          Everything you need to monitor and manage macOS and Windows endpoints.
+        </p>
+      </div>
+
+      <!-- Dashboard -->
+      <div class="mt-20">
+        <h2 class="text-2xl font-bold text-gray-900">Fleet Dashboard</h2>
+        <p class="mt-4 max-w-3xl text-gray-600">
+          A single pane of glass for your entire fleet. See device counts, OS distribution, check-in status, 
+          and security posture at a glance. Drill down into any device for full details.
+        </p>
+        <div class="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <div class="flex h-64 items-center justify-center text-gray-400">
+            Dashboard screenshot placeholder
+          </div>
+        </div>
+      </div>
+
+      <!-- Modules -->
+      <div class="mt-20">
+        <h2 class="text-2xl font-bold text-gray-900">Data Modules</h2>
+        <p class="mt-4 max-w-3xl text-gray-600">
+          Lightweight agents collect data at the source. Each module focuses on a specific data domain.
+        </p>
+
+        <div class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[
+            { name: 'Hardware', desc: 'CPU, RAM, storage, battery, model, serial number, performance cores' },
+            { name: 'Software', desc: 'Installed applications, versions, bundle IDs, install dates' },
+            { name: 'Network', desc: 'Interfaces, IP addresses, MAC addresses, Wi-Fi SSID, VPN status' },
+            { name: 'Security', desc: 'FileVault/BitLocker, firewall, SIP, Gatekeeper, secure boot' },
+            { name: 'OS Version', desc: 'Build number, patch level, rapid security responses' },
+            { name: 'Profiles', desc: 'Configuration profiles, MDM enrollment, certificates' },
+            { name: 'Printers', desc: 'Installed printers, drivers, default printer, network printers' },
+            { name: 'Disk Encryption', desc: 'Full disk encryption status, recovery key escrow' },
+            { name: 'Application Usage', desc: 'Active time, foreground tracking, launch counts' },
+          ].map(({ name, desc }) => (
+            <div class="rounded-lg border border-gray-100 p-6">
+              <h3 class="font-semibold text-gray-900">{name}</h3>
+              <p class="mt-2 text-sm text-gray-600">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Architecture -->
+      <div class="mt-20">
+        <h2 class="text-2xl font-bold text-gray-900">Architecture</h2>
+        <div class="mt-8 grid gap-8 md:grid-cols-2">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Client Agents</h3>
+            <ul class="mt-4 space-y-3 text-gray-600">
+              <li class="flex items-start gap-2">
+                <span class="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span>
+                <span><strong>macOS:</strong> Native Swift agent, launchd-managed, osquery integration</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span>
+                <span><strong>Windows:</strong> .NET 8 agent, Windows Service + Scheduled Task, osquery integration</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Server Stack</h3>
+            <ul class="mt-4 space-y-3 text-gray-600">
+              <li class="flex items-start gap-2">
+                <span class="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span>
+                <span><strong>API:</strong> FastAPI (Python) with versioned REST endpoints</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span>
+                <span><strong>Frontend:</strong> Next.js with BFF pattern, server-side rendering</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span>
+                <span><strong>Database:</strong> PostgreSQL (Azure Flexible Server or RDS)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="mt-1 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span>
+                <span><strong>Infrastructure:</strong> Terraform modules for Azure and AWS</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,87 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Open-source endpoint management for macOS and Windows fleets' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-white text-gray-900 antialiased">
+    <nav class="border-b border-gray-100">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <a href="/" class="flex items-center gap-2 text-xl font-bold text-gray-900">
+          <img src="/logo.svg" alt="ReportMate" class="h-8 w-8" />
+          ReportMate
+        </a>
+        <div class="hidden items-center gap-8 md:flex">
+          <a href="/features" class="text-sm text-gray-600 hover:text-gray-900">Features</a>
+          <a href="/pricing" class="text-sm text-gray-600 hover:text-gray-900">Pricing</a>
+          <a href="https://docs.reportmate.app" class="text-sm text-gray-600 hover:text-gray-900">Docs</a>
+          <a href="https://demo.reportmate.app" class="text-sm text-gray-600 hover:text-gray-900">Live Demo</a>
+          <a href="https://github.com/reportmate" class="text-sm text-gray-600 hover:text-gray-900">GitHub</a>
+        </div>
+        <div class="flex items-center gap-3">
+          <a
+            href="https://demo.reportmate.app"
+            class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+          >
+            Try Demo
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="border-t border-gray-100 bg-gray-50">
+      <div class="mx-auto max-w-6xl px-6 py-12">
+        <div class="grid gap-8 md:grid-cols-4">
+          <div>
+            <h3 class="font-bold text-gray-900">ReportMate</h3>
+            <p class="mt-2 text-sm text-gray-600">
+              Open-source endpoint management for macOS and Windows fleets.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-gray-900">Product</h4>
+            <ul class="mt-3 space-y-2 text-sm text-gray-600">
+              <li><a href="/features" class="hover:text-gray-900">Features</a></li>
+              <li><a href="/pricing" class="hover:text-gray-900">Pricing</a></li>
+              <li><a href="https://demo.reportmate.app" class="hover:text-gray-900">Live Demo</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-gray-900">Resources</h4>
+            <ul class="mt-3 space-y-2 text-sm text-gray-600">
+              <li><a href="https://docs.reportmate.app" class="hover:text-gray-900">Documentation</a></li>
+              <li><a href="https://github.com/reportmate" class="hover:text-gray-900">GitHub</a></li>
+              <li><a href="https://github.com/reportmate/reportmate/wiki" class="hover:text-gray-900">Wiki</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-gray-900">Deploy</h4>
+            <ul class="mt-3 space-y-2 text-sm text-gray-600">
+              <li><a href="https://docs.reportmate.app" class="hover:text-gray-900">Self-Host Guide</a></li>
+              <li><a href="/pricing" class="hover:text-gray-900">ReportMate Cloud</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-8 border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
+          &copy; {new Date().getFullYear()} ReportMate. Open source under BSL 1.1.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

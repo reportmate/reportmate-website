@@ -1,0 +1,134 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const tiers = [
+  {
+    name: 'Self-Hosted',
+    price: 'Free',
+    period: 'forever',
+    description: 'Full control. Deploy on your own infrastructure.',
+    features: [
+      'Unlimited endpoints',
+      'All data modules',
+      'Full REST API access',
+      'Terraform modules (Azure + AWS)',
+      'Community support via GitHub',
+      'BSL 1.1 license',
+    ],
+    cta: 'Get Started',
+    ctaLink: 'https://github.com/reportmate',
+    highlighted: false,
+  },
+  {
+    name: 'Cloud Starter',
+    price: '$49',
+    period: '/month',
+    description: 'We host it. You manage your fleet.',
+    features: [
+      'Up to 100 endpoints',
+      'All data modules',
+      'Full REST API access',
+      'Managed hosting (AWS)',
+      'Email support',
+      'Daily backups',
+      'SSL included',
+    ],
+    cta: 'Coming Soon',
+    ctaLink: '#',
+    highlighted: true,
+  },
+  {
+    name: 'Cloud Pro',
+    price: '$149',
+    period: '/month',
+    description: 'Unlimited endpoints with priority support.',
+    features: [
+      'Unlimited endpoints',
+      'All data modules',
+      'Full REST API access',
+      'Managed hosting (AWS)',
+      'Priority support',
+      'SSO / SAML',
+      'Custom retention policies',
+      'Webhook integrations',
+    ],
+    cta: 'Coming Soon',
+    ctaLink: '#',
+    highlighted: false,
+  },
+  {
+    name: 'Enterprise',
+    price: 'Custom',
+    period: '',
+    description: 'Dedicated instance with custom onboarding.',
+    features: [
+      'Everything in Pro',
+      'Dedicated infrastructure',
+      'Custom onboarding',
+      'SLA guarantee',
+      'Phone + Slack support',
+      'Custom integrations',
+      'On-premise option',
+    ],
+    cta: 'Contact Us',
+    ctaLink: 'mailto:hello@reportmate.app',
+    highlighted: false,
+  },
+];
+---
+
+<Layout title="Pricing - ReportMate" description="ReportMate pricing: free self-hosted or managed cloud plans">
+  <section class="py-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="text-center">
+        <h1 class="text-4xl font-bold text-gray-900">Simple, transparent pricing</h1>
+        <p class="mt-4 text-lg text-gray-600">
+          Self-host for free, or let us manage it. No hidden fees.
+        </p>
+      </div>
+
+      <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        {tiers.map((tier) => (
+          <div
+            class:list={[
+              'flex flex-col rounded-xl border p-8',
+              tier.highlighted
+                ? 'border-brand-500 shadow-lg shadow-brand-500/10'
+                : 'border-gray-200',
+            ]}
+          >
+            <h3 class="text-lg font-semibold text-gray-900">{tier.name}</h3>
+            <div class="mt-4">
+              <span class="text-4xl font-bold text-gray-900">{tier.price}</span>
+              {tier.period && <span class="text-gray-500">{tier.period}</span>}
+            </div>
+            <p class="mt-2 text-sm text-gray-600">{tier.description}</p>
+
+            <ul class="mt-8 flex-1 space-y-3">
+              {tier.features.map((feature) => (
+                <li class="flex items-start gap-2 text-sm text-gray-600">
+                  <svg class="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href={tier.ctaLink}
+              class:list={[
+                'mt-8 block rounded-lg px-4 py-2.5 text-center text-sm font-medium',
+                tier.highlighted
+                  ? 'bg-brand-600 text-white hover:bg-brand-700'
+                  : 'border border-gray-300 text-gray-700 hover:bg-gray-50',
+              ]}
+            >
+              {tier.cta}
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
