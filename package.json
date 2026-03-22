@@ -2,6 +2,7 @@
   "name": "reportmate-website",
   "type": "module",
   "version": "1.0.0",
+  "license": "MIT",
   "description": "Marketing website for ReportMate - reportmate.app",
   "scripts": {
     "dev": "astro dev",
