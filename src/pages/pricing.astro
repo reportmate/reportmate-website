@@ -9,94 +9,123 @@ const tiers = [
     description: 'Full control. Deploy on your own infrastructure.',
     features: [
       'Unlimited endpoints',
-      'All data modules',
+      'All ten data modules',
       'Full REST API access',
       'Terraform modules (Azure + AWS)',
+      'Real-time dashboard',
       'Community support via GitHub',
-      'BSL 1.1 license',
+      'Source-available (BSL 1.1)',
     ],
-    cta: 'Get Started',
+    cta: 'Get Started on GitHub',
     ctaLink: 'https://github.com/reportmate',
     highlighted: false,
   },
   {
     name: 'Cloud Starter',
-    price: '$49',
+    price: '$99',
     period: '/month',
     description: 'We host it. You manage your fleet.',
     features: [
       'Up to 100 endpoints',
-      'All data modules',
+      'All ten data modules',
       'Full REST API access',
-      'Managed hosting (AWS)',
+      'Managed hosting & upgrades',
+      'Daily backups, SSL included',
       'Email support',
-      'Daily backups',
-      'SSL included',
     ],
-    cta: 'Coming Soon',
-    ctaLink: '#',
+    cta: 'Join the Waitlist',
+    ctaLink: 'mailto:hello@reportmate.app?subject=ReportMate%20Cloud%20Starter%20waitlist',
     highlighted: true,
+    badge: 'Early access',
   },
   {
     name: 'Cloud Pro',
-    price: '$149',
+    price: '$499',
     period: '/month',
-    description: 'Unlimited endpoints with priority support.',
+    description: 'Scale up with priority support and SSO.',
     features: [
       'Unlimited endpoints',
-      'All data modules',
-      'Full REST API access',
-      'Managed hosting (AWS)',
-      'Priority support',
+      'Everything in Starter',
       'SSO / SAML',
       'Custom retention policies',
       'Webhook integrations',
+      'Priority support',
     ],
-    cta: 'Coming Soon',
-    ctaLink: '#',
+    cta: 'Join the Waitlist',
+    ctaLink: 'mailto:hello@reportmate.app?subject=ReportMate%20Cloud%20Pro%20waitlist',
     highlighted: false,
+    badge: 'Early access',
   },
   {
     name: 'Enterprise',
     price: 'Custom',
     period: '',
-    description: 'Dedicated instance with custom onboarding.',
+    description: 'Dedicated instance with onboarding and an SLA.',
     features: [
       'Everything in Pro',
       'Dedicated infrastructure',
-      'Custom onboarding',
+      'Guided onboarding & migration',
       'SLA guarantee',
       'Phone + Slack support',
       'Custom integrations',
       'On-premise option',
     ],
-    cta: 'Contact Us',
-    ctaLink: 'mailto:hello@reportmate.app',
+    cta: 'Contact Sales',
+    ctaLink: 'mailto:hello@reportmate.app?subject=ReportMate%20Enterprise',
     highlighted: false,
+  },
+];
+
+const faqs = [
+  {
+    q: 'Is the self-hosted version really free?',
+    a: 'Yes. The full platform — clients, API, dashboard, and Terraform — is source-available under BSL 1.1. Run it on unlimited endpoints in your own cloud at no license cost. The paid plans exist for teams who would rather we operate it for them.',
+  },
+  {
+    q: 'Where does my fleet data live?',
+    a: 'On self-hosted and Enterprise, entirely in infrastructure you own — telemetry never transits our servers. On managed Cloud plans, in a tenant we operate on your behalf, with daily backups and SSL. Either way the data is plain PostgreSQL you can query and export.',
+  },
+  {
+    q: 'What does BSL 1.1 mean for me?',
+    a: 'The Business Source License lets you read, run, audit, modify, and self-host ReportMate freely for your own fleet. The only restriction is offering ReportMate itself as a competing hosted service. Each release converts to a fully open license over time.',
+  },
+  {
+    q: 'Can I start self-hosted and move to managed later?',
+    a: 'Yes. Because both run the same code and the same PostgreSQL schema, migrating between self-hosted and managed Cloud is a data move, not a re-platform. Enterprise onboarding includes a guided migration.',
+  },
+  {
+    q: 'How does endpoint counting work?',
+    a: 'An endpoint is any Macintosh or Windows device reporting in. Self-hosted and Enterprise are unlimited. Cloud Starter is capped at 100 active devices; Cloud Pro is unlimited.',
   },
 ];
 ---
 
-<Layout title="Pricing - ReportMate" description="ReportMate pricing: free self-hosted or managed cloud plans">
-  <section class="py-24">
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="text-center">
-        <h1 class="text-4xl font-bold text-gray-900">Simple, transparent pricing</h1>
-        <p class="mt-4 text-lg text-gray-600">
-          Self-host for free, or let us manage it. No hidden fees.
-        </p>
-      </div>
+<Layout title="Pricing — ReportMate" description="Self-host ReportMate free on unlimited endpoints, or run it managed. Transparent, open-core pricing for Macintosh and Windows fleets.">
+  <section class="bg-gradient-to-b from-brand-50 to-white">
+    <div class="mx-auto max-w-6xl px-6 py-20 text-center">
+      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Open-core pricing</h1>
+      <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
+        Self-host the whole platform free, forever, on unlimited endpoints. Or let us run it for you. No per-seat
+        traps, no locking your own data behind a paywall.
+      </p>
+    </div>
+  </section>
 
-      <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+  <section class="pb-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
         {tiers.map((tier) => (
           <div
             class:list={[
-              'flex flex-col rounded-xl border p-8',
-              tier.highlighted
-                ? 'border-brand-500 shadow-lg shadow-brand-500/10'
-                : 'border-gray-200',
+              'relative flex flex-col rounded-xl border p-8',
+              tier.highlighted ? 'border-brand-500 shadow-lg shadow-brand-500/10' : 'border-gray-200',
             ]}
           >
+            {tier.badge && (
+              <span class="absolute -top-3 left-8 rounded-full bg-brand-600 px-3 py-1 text-xs font-medium text-white">
+                {tier.badge}
+              </span>
+            )}
             <h3 class="text-lg font-semibold text-gray-900">{tier.name}</h3>
             <div class="mt-4">
               <span class="text-4xl font-bold text-gray-900">{tier.price}</span>
@@ -119,15 +148,37 @@ const tiers = [
               href={tier.ctaLink}
               class:list={[
                 'mt-8 block rounded-lg px-4 py-2.5 text-center text-sm font-medium',
-                tier.highlighted
-                  ? 'bg-brand-600 text-white hover:bg-brand-700'
-                  : 'border border-gray-300 text-gray-700 hover:bg-gray-50',
+                tier.highlighted ? 'bg-brand-600 text-white hover:bg-brand-700' : 'border border-gray-300 text-gray-700 hover:bg-gray-50',
               ]}
             >
               {tier.cta}
             </a>
           </div>
         ))}
+      </div>
+      <p class="mt-8 text-center text-sm text-gray-500">
+        Managed Cloud plans are in early access — join the waitlist and we'll reach out as spots open.
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="border-t border-gray-100 bg-gray-50 py-20">
+    <div class="mx-auto max-w-3xl px-6">
+      <h2 class="text-center text-3xl font-bold text-gray-900">Frequently asked</h2>
+      <div class="mt-12 space-y-8">
+        {faqs.map(({ q, a }) => (
+          <div>
+            <h3 class="font-semibold text-gray-900">{q}</h3>
+            <p class="mt-2 text-gray-600">{a}</p>
+          </div>
+        ))}
+      </div>
+      <div class="mt-12 text-center">
+        <p class="text-gray-600">Still have questions about a rollout?</p>
+        <a href="mailto:hello@reportmate.app" class="mt-3 inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-700">
+          Talk to us
+        </a>
       </div>
     </div>
   </section>
