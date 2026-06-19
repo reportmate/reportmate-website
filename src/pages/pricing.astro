@@ -1,19 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
+// The full platform ships in every tier — no feature paywalls. Plans differ
+// only by who runs it, how it scales, and the level of support behind it.
+const includedEverywhere = 'The complete platform — all ten data modules, full REST API and webhooks, SSO / SAML, real-time dashboard. No feature paywalls.';
+
 const tiers = [
   {
     name: 'Self-Hosted',
     price: 'Free',
     period: 'forever',
-    description: 'Full control. Deploy on your own infrastructure.',
+    description: 'Run the whole platform on your own infrastructure.',
     features: [
       'Unlimited endpoints',
       'All ten data modules',
-      'Full REST API access',
+      'Full REST API & webhooks',
+      'SSO / SAML',
       'Terraform modules (Azure + AWS)',
       'Real-time dashboard',
-      'Community support via GitHub',
+      'Community support (GitHub)',
       'Source-available (BSL 1.1)',
     ],
     cta: 'Get Started on GitHub',
@@ -24,13 +29,13 @@ const tiers = [
     name: 'Cloud Starter',
     price: '$99',
     period: '/month',
-    description: 'We host it. You manage your fleet.',
+    annualNote: 'or $990/year — 2 months free',
+    description: 'We host, upgrade, and back it up. You manage your fleet.',
     features: [
       'Up to 100 endpoints',
-      'All ten data modules',
-      'Full REST API access',
-      'Managed hosting & upgrades',
-      'Daily backups, SSL included',
+      'Full platform — fully managed',
+      'Managed hosting & automatic upgrades',
+      'Daily backups + SSL included',
       'Email support',
     ],
     cta: 'Join the Waitlist',
@@ -42,13 +47,14 @@ const tiers = [
     name: 'Cloud Pro',
     price: '$499',
     period: '/month',
-    description: 'Scale up with priority support and SSO.',
+    annualNote: 'or $4,990/year — 2 months free',
+    description: 'Managed at scale, with isolation and priority support.',
     features: [
       'Unlimited endpoints',
       'Everything in Starter',
-      'SSO / SAML',
-      'Custom retention policies',
-      'Webhook integrations',
+      'Single-tenant isolation',
+      'Custom data retention',
+      'Uptime SLA',
       'Priority support',
     ],
     cta: 'Join the Waitlist',
@@ -60,19 +66,34 @@ const tiers = [
     name: 'Enterprise',
     price: 'Custom',
     period: '',
-    description: 'Dedicated instance with onboarding and an SLA.',
+    description: 'Dedicated or on-premise, with a white-glove support package built in.',
     features: [
       'Everything in Pro',
-      'Dedicated infrastructure',
-      'Guided onboarding & migration',
-      'SLA guarantee',
-      'Phone + Slack support',
+      'Dedicated infrastructure or on-premise',
+      'Response-time SLA',
+      'Named phone + Slack support',
       'Custom integrations',
-      'On-premise option',
+      'Onboarding & migration included',
     ],
     cta: 'Contact Sales',
     ctaLink: 'mailto:hello@reportmate.app?subject=ReportMate%20Enterprise',
     highlighted: false,
+  },
+];
+
+// Human services, sold as a package on top of any plan — including self-hosted.
+const services = [
+  {
+    title: 'Installation & configuration',
+    desc: 'We stand ReportMate up in your cloud or on-premise, wire in SSO, and tune collection to your fleet.',
+  },
+  {
+    title: 'Guided migration',
+    desc: 'Move off MunkiReport, Sal, or spreadsheets without losing history — we map and import your existing data.',
+  },
+  {
+    title: 'Ongoing support & SLA',
+    desc: 'Named phone and Slack support with response-time guarantees, whether we host it or you do.',
   },
 ];
 
@@ -97,13 +118,21 @@ const faqs = [
     q: 'How does endpoint counting work?',
     a: 'An endpoint is any Macintosh or Windows device reporting in. Self-hosted and Enterprise are unlimited. Cloud Starter is capped at 100 active devices; Cloud Pro is unlimited.',
   },
+  {
+    q: 'I want to self-host but still get help — can I?',
+    a: "Yes. Installation, configuration, and support are available as a package whether you run ReportMate yourself or let us manage it. We'll stand up your deployment, tune it to your fleet, migrate you off MunkiReport or Sal, and stay on call — without you giving up control of your data.",
+  },
+  {
+    q: 'What does an Enterprise engagement include?',
+    a: 'A scoped package: hands-on installation and configuration, guided migration from MunkiReport, Sal, or spreadsheets, a dedicated instance (managed by us or on-premise), an SLA, and named phone and Slack support. We size each engagement to your fleet — talk to us and we will put together a quote.',
+  },
 ];
 ---
 
 <Layout title="Pricing — ReportMate" description="Self-host ReportMate free on unlimited endpoints, or run it managed. Transparent, open-core pricing for Macintosh and Windows fleets.">
   <section class="bg-gradient-to-b from-brand-50 to-white">
     <div class="mx-auto max-w-6xl px-6 py-20 text-center">
-      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Open-core pricing</h1>
+      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Simple, transparent pricing</h1>
       <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
         Self-host the whole platform free, forever, on unlimited endpoints. Or let us run it for you. No per-seat
         traps, no locking your own data behind a paywall.
@@ -131,6 +160,7 @@ const faqs = [
               <span class="text-4xl font-bold text-gray-900">{tier.price}</span>
               {tier.period && <span class="text-gray-500">{tier.period}</span>}
             </div>
+            {tier.annualNote && <p class="mt-1 text-xs font-medium text-brand-600">{tier.annualNote}</p>}
             <p class="mt-2 text-sm text-gray-600">{tier.description}</p>
 
             <ul class="mt-8 flex-1 space-y-3">
@@ -156,9 +186,50 @@ const faqs = [
           </div>
         ))}
       </div>
-      <p class="mt-8 text-center text-sm text-gray-500">
+      <p class="mx-auto mt-10 max-w-2xl text-center text-sm text-gray-500">
+        {includedEverywhere} You pay for who runs it, how it scales, and the support behind it — never to unlock your own data.
+      </p>
+      <p class="mt-4 text-center text-sm text-gray-500">
         Managed Cloud plans are in early access — join the waitlist and we'll reach out as spots open.
       </p>
+    </div>
+  </section>
+
+  <!-- Services & support -->
+  <section class="border-t border-gray-100 bg-white py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white shadow-lg shadow-brand-500/10">
+        <div class="p-8 sm:p-12">
+          <div class="max-w-2xl">
+            <span class="inline-flex items-center rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white">
+              Services &amp; support
+            </span>
+            <h2 class="mt-4 text-3xl font-bold tracking-tight text-gray-900">
+              We'll install it, migrate you, and stay on call
+            </h2>
+            <p class="mt-4 text-lg text-gray-600">
+              Self-hosting or managed, our team can stand ReportMate up for your fleet, move you off your old
+              tooling, and back it with an SLA. Support is a package you add to any plan — not a tier you're forced
+              to climb to.
+            </p>
+          </div>
+
+          <div class="mt-10 grid gap-8 md:grid-cols-3">
+            {services.map((service) => (
+              <div class="rounded-xl border border-brand-100 bg-white/70 p-6">
+                <h3 class="text-base font-semibold text-gray-900">{service.title}</h3>
+                <p class="mt-2 text-sm text-gray-600">{service.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div class="mt-10">
+            <a href="mailto:hello@reportmate.app?subject=ReportMate%20services%20%26%20support" class="inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-700">
+              Talk to us about a package
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
