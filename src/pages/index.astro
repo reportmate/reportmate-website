@@ -7,11 +7,8 @@ import { modules } from '../data/modules.js';
 const archDiagram = `flowchart TB
   subgraph EP["① &nbsp;ENDPOINTS — collect &amp; process on-device"]
     direction LR
-    MAC["<b>macOS</b><br/>native Swift binary<br/><small>launchd · signed &amp; notarized</small>"]
-    OSQ(["<b>osquery</b><br/>+ macadmins extension<br/>+ native OS APIs"])
-    WIN["<b>Windows</b><br/>C# / .NET binary<br/><small>service + task · signed</small>"]
-    MAC --- OSQ
-    OSQ --- WIN
+    MAC["<b>macOS</b><br/>native ReportMate binary<br/><small>Swift · launchd · signed &amp; notarized</small>"]
+    WIN["<b>Windows</b><br/>native ReportMate binary<br/><small>C# / .NET · service + task · signed</small>"]
   end
 
   PAY{{"<b>one signed event payload</b><br/>10 module documents<br/><small>hardware · system · network · security · applications<br/>installs · inventory · management · identity · peripherals</small>"}}
@@ -43,7 +40,7 @@ const archDiagram = `flowchart TB
   classDef pay fill:#0074c7,stroke:#015da1,stroke-width:2.5px,color:#ffffff;
   classDef cloud fill:#ecfdf5,stroke:#059669,stroke-width:2px,color:#065f46;
   classDef read fill:#fff7ed,stroke:#ea580c,stroke-width:2px,color:#9a3412;
-  class MAC,WIN,OSQ ep;
+  class MAC,WIN ep;
   class PAY pay;
   class API,DB,RT cloud;
   class WEB,APPS,INT read;
@@ -114,23 +111,23 @@ const attributions = [
         </a>
       </div>
       <p class="mt-6 text-sm text-gray-500">
-        Deploy to your own Azure or AWS tenant with Terraform — or let us run it for you.
+        Deploy to your own Azure or AWS tenant with Terraform — <span class="font-semibold text-accent-500">or let us run it for you.</span>
       </p>
     </div>
   </section>
 
   <!-- Positioning strip -->
-  <section class="border-y border-gray-100 bg-white">
-    <div class="mx-auto grid max-w-6xl gap-px bg-gray-100 sm:grid-cols-2 lg:grid-cols-4">
+  <section class="border-y border-gray-100 bg-gradient-to-b from-white to-brand-50/40">
+    <div class="mx-auto grid max-w-6xl divide-y divide-gray-200/70 px-6 sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
       {[
-        { stat: '10', label: 'data modules per device' },
-        { stat: '2', label: 'first-class platforms: Mac & Windows' },
-        { stat: '40+', label: 'versioned REST API endpoints' },
-        { stat: '100%', label: 'of your data stays in your cloud' },
+        { stat: '10', label: 'Data modules per device' },
+        { stat: '2', label: 'First-class platforms: Mac & Windows' },
+        { stat: '40+', label: 'Versioned REST API endpoints' },
+        { stat: '100%', label: 'Of your data stays in your cloud' },
       ].map(({ stat, label }) => (
-        <div class="bg-white px-6 py-8 text-center">
-          <div class="text-3xl font-bold text-brand-600">{stat}</div>
-          <div class="mt-1 text-sm text-gray-600">{label}</div>
+        <div class="px-6 py-10 text-center">
+          <div class="bg-gradient-to-br from-brand-700 to-brand-400 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent">{stat}</div>
+          <div class="mx-auto mt-2 max-w-[12rem] text-sm font-medium text-gray-500">{label}</div>
         </div>
       ))}
     </div>
@@ -224,28 +221,29 @@ const attributions = [
         </p>
       </div>
 
-      <!-- Five-stage pipeline stepper -->
-      <ol class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        {[
-          { n: '1', verb: 'Collect', where: 'on the device', tone: 'device', desc: 'osquery + native OS tooling' },
-          { n: '2', verb: 'Transmit', where: 'on the device', tone: 'device', desc: 'signed event over HTTPS' },
-          { n: '3', verb: 'Ingest', where: 'in your cloud', tone: 'cloud', desc: 'FastAPI /api/v1/events' },
-          { n: '4', verb: 'Store', where: 'in your cloud', tone: 'cloud', desc: 'PostgreSQL, JSONB per module' },
-          { n: '5', verb: 'Read', where: 'web + native apps', tone: 'read', desc: 'dashboard, native apps & API' },
-        ].map(({ n, verb, where, tone, desc }) => (
-          <li class="relative rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center gap-2">
-              <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">{n}</span>
-              <span class="font-semibold text-gray-900">{verb}</span>
-            </div>
-            <div class:list={[
-              'mt-3 inline-block rounded-full px-2 py-0.5 text-xs font-medium',
-              tone === 'device' ? 'bg-blue-50 text-blue-700' : tone === 'cloud' ? 'bg-emerald-50 text-emerald-700' : 'bg-violet-50 text-violet-700',
-            ]}>{where}</div>
-            <p class="mt-2 text-sm text-gray-600">{desc}</p>
-          </li>
-        ))}
-      </ol>
+      <!-- Five-stage pipeline -->
+      <div class="relative mt-16">
+        <div class="absolute left-[10%] right-[10%] top-5 hidden h-0.5 bg-gradient-to-r from-blue-200 via-emerald-200 to-violet-200 lg:block"></div>
+        <ol class="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
+          {[
+            { n: '1', verb: 'Collect', where: 'On device', tone: 'device', desc: 'Native binary reads OS-level data' },
+            { n: '2', verb: 'Transmit', where: 'On device', tone: 'device', desc: 'Signed event sent over HTTPS' },
+            { n: '3', verb: 'Ingest', where: 'In your cloud', tone: 'cloud', desc: 'FastAPI receives the event' },
+            { n: '4', verb: 'Store', where: 'In your cloud', tone: 'cloud', desc: 'Written to PostgreSQL as JSONB' },
+            { n: '5', verb: 'Read', where: 'Web & native', tone: 'read', desc: 'Dashboard, native apps & API' },
+          ].map(({ n, verb, where, tone, desc }) => (
+            <li class="relative flex flex-col items-center text-center">
+              <div class="z-10 flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-white shadow-sm ring-4 ring-gray-50">{n}</div>
+              <h3 class="mt-4 text-sm font-bold uppercase tracking-wide text-gray-900">{verb}</h3>
+              <span class:list={[
+                'mt-2 inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium',
+                tone === 'device' ? 'bg-blue-50 text-blue-700' : tone === 'cloud' ? 'bg-emerald-50 text-emerald-700' : 'bg-violet-50 text-violet-700',
+              ]}>{where}</span>
+              <p class="mt-2 max-w-[12rem] text-sm text-gray-500">{desc}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
 
       <div class="mt-12">
         <Mermaid
