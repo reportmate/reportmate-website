@@ -1,0 +1,45 @@
+---
+// Multi-segment donut mark echoing the logo's donut chart.
+interface Props {
+  class?: string;
+  label?: string;
+}
+const { class: className = 'h-5 w-5', label } = Astro.props;
+// Segment sizes (sum = 100) paired with the logo's donut colors.
+const segments = [
+  { value: 30, color: '#f08a00' },
+  { value: 22, color: '#e0533a' },
+  { value: 18, color: '#7a4fa0' },
+  { value: 16, color: '#16a596' },
+  { value: 14, color: '#0074c7' },
+];
+const r = 9;
+const c = 2 * Math.PI * r;
+let offset = 0;
+const arcs = segments.map((s) => {
+  const len = (s.value / 100) * c;
+  const arc = { color: s.color, dash: `${len} ${c - len}`, off: offset };
+  offset -= len;
+  return arc;
+});
+---
+<svg
+  class={className}
+  viewBox="0 0 24 24"
+  role={label ? 'img' : undefined}
+  aria-hidden={label ? undefined : 'true'}
+  aria-label={label}
+>
+  <g transform="rotate(-90 12 12)" fill="none" stroke-width="5">
+    {arcs.map((a) => (
+      <circle
+        cx="12"
+        cy="12"
+        r={r}
+        stroke={a.color}
+        stroke-dasharray={a.dash}
+        stroke-dashoffset={a.off}
+      />
+    ))}
+  </g>
+</svg>
