@@ -1,0 +1,37 @@
+---
+// Mini bar-chart mark echoing the logo's bar graph.
+// Decorative by default (aria-hidden); pass a label to make it meaningful.
+interface Props {
+  class?: string;
+  label?: string;
+}
+const { class: className = 'h-5 w-5', label } = Astro.props;
+// Heights as a fraction of the 24-unit viewBox, with the logo's bar colors.
+const bars = [
+  { h: 10, fill: '#0074c7' },
+  { h: 16, fill: '#e0533a' },
+  { h: 13, fill: '#f08a00' },
+  { h: 21, fill: '#f4b400' },
+];
+const barW = 4;
+const gap = 2;
+---
+<svg
+  class={className}
+  viewBox="0 0 24 24"
+  fill="none"
+  role={label ? 'img' : undefined}
+  aria-hidden={label ? undefined : 'true'}
+  aria-label={label}
+>
+  {bars.map((b, i) => (
+    <rect
+      x={2 + i * (barW + gap)}
+      y={22 - b.h}
+      width={barW}
+      height={b.h}
+      rx="1"
+      fill={b.fill}
+    />
+  ))}
+</svg>

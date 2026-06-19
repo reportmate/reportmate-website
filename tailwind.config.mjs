@@ -33,6 +33,17 @@ export default {
           900: '#76380e',
           950: '#401a04',
         },
+        // Full data-viz palette pulled from the logo's bar + donut charts.
+        // Used for chart/data motifs sprinkled through the site so they read
+        // as "ReportMate" rather than generic blue/orange.
+        chart: {
+          blue: '#0074c7',
+          red: '#e0533a',
+          orange: '#f08a00',
+          gold: '#f4b400',
+          teal: '#16a596',
+          purple: '#7a4fa0',
+        },
       },
     },
   },

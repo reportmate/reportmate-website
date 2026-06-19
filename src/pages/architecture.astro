@@ -1,0 +1,157 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Mermaid from '../components/Mermaid.astro';
+
+const archDiagram = `flowchart TB
+  subgraph EP["① &nbsp;ENDPOINTS — collect &amp; process on-device"]
+    direction LR
+    MAC["<b>Macintosh</b><br/>native ReportMate binary<br/><small>Swift · launchd</small>"]
+    WIN["<b>Windows</b><br/>native ReportMate binary<br/><small>C# / .NET · service + task</small>"]
+    MAC ~~~ WIN
+  end
+
+  PAY{{"<b>one event payload</b><br/>10 module documents<br/><small>hardware · system · network · security · applications<br/>installs · inventory · management · identity · peripherals</small>"}}
+  EP ==> PAY
+
+  subgraph CLOUD["② &nbsp;YOUR CLOUD — Terraform on Azure/AWS, or self-host with Docker"]
+    direction LR
+    API["<b>FastAPI</b><br/>ingest + REST /api/v1<br/><small>40+ endpoints · OpenAPI</small>"]
+    DB[("<b>PostgreSQL</b><br/>JSONB per module")]
+    RT(["<b>SignalR / Web PubSub</b><br/>real-time push"])
+    API --> DB
+    API --> RT
+  end
+  PAY ==>|"HTTPS POST /api/v1/events<br/>X-Client-Passphrase"| API
+
+  subgraph READ["③ &nbsp;READ — web, native &amp; your tools"]
+    direction LR
+    WEB["<b>Next.js dashboard</b><br/><small>live fleet view</small>"]
+    APPS["<b>Native Macintosh &amp; Windows apps</b><br/><small>coming soon</small>"]
+    INT["<b>CMDB · SIEM · automation</b><br/><small>via REST API</small>"]
+  end
+  DB ==> WEB
+  RT ==> WEB
+  DB ==> APPS
+  RT ==> APPS
+  API ==> INT
+
+  classDef ep fill:#eff6ff,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
+  classDef pay fill:#0074c7,stroke:#015da1,stroke-width:2.5px,color:#ffffff;
+  classDef cloud fill:#ecfdf5,stroke:#059669,stroke-width:2px,color:#065f46;
+  classDef read fill:#fff7ed,stroke:#ea580c,stroke-width:2px,color:#9a3412;
+  class MAC,WIN ep;
+  class PAY pay;
+  class API,DB,RT cloud;
+  class WEB,APPS,INT read;
+
+  style EP fill:#f8fafc,stroke:#cbd5e1,color:#334155;
+  style CLOUD fill:#f8fafc,stroke:#cbd5e1,color:#334155;
+  style READ fill:#f8fafc,stroke:#cbd5e1,color:#334155;`;
+
+---
+
+<Layout title="Architecture — ReportMate" description="How ReportMate works: native on-device collection, an event-driven REST API, a JSONB store, real-time push, and Terraform deployment into your own cloud.">
+  <!-- Hero + pipeline (integrated) -->
+  <section class="bg-gradient-to-b from-brand-50 to-white">
+    <div class="mx-auto max-w-6xl px-6 py-20">
+      <div class="mx-auto max-w-3xl text-center">
+        <div class="inline-flex items-center rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-brand-700 shadow-sm">
+          Under the hood
+        </div>
+        <h1 class="mt-5 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">How ReportMate works</h1>
+        <p class="mx-auto mt-5 max-w-2xl text-lg text-gray-600">
+          Native binaries collect and process on each device, then stream events to an API, store, and dashboard
+          that run in your own Azure or AWS tenant — deployed with Terraform in an afternoon. Every layer is yours
+          to read, audit, and extend, and your fleet data never leaves infrastructure you control.
+        </p>
+      </div>
+
+      <!-- Five-stage pipeline -->
+      <div class="relative mt-16">
+        <div class="absolute left-[10%] right-[10%] top-5 hidden h-0.5 bg-gradient-to-r from-blue-200 via-emerald-200 to-violet-200 lg:block"></div>
+        <ol class="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
+          {[
+            { n: '1', verb: 'Collect', where: 'On device', tone: 'device', desc: 'Native binary reads OS-level data' },
+            { n: '2', verb: 'Transmit', where: 'On device', tone: 'device', desc: 'Event sent over HTTPS' },
+            { n: '3', verb: 'Ingest', where: 'In your cloud', tone: 'cloud', desc: 'FastAPI receives the event' },
+            { n: '4', verb: 'Store', where: 'In your cloud', tone: 'cloud', desc: 'Written to PostgreSQL as JSONB' },
+            { n: '5', verb: 'Read', where: 'Web & native', tone: 'read', desc: 'Dashboard, native apps & API' },
+          ].map(({ n, verb, where, tone, desc }) => (
+            <li class="relative flex flex-col items-center text-center">
+              <div class="z-10 flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-white shadow-sm ring-4 ring-gray-50">{n}</div>
+              <h3 class="mt-4 text-sm font-bold uppercase tracking-wide text-gray-900">{verb}</h3>
+              <span class:list={[
+                'mt-2 inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium',
+                tone === 'device' ? 'bg-blue-50 text-blue-700' : tone === 'cloud' ? 'bg-emerald-50 text-emerald-700' : 'bg-violet-50 text-violet-700',
+              ]}>{where}</span>
+              <p class="mt-2 max-w-[12rem] text-sm text-gray-500">{desc}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture diagram -->
+  <section class="border-y border-gray-100 bg-gray-50 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <Mermaid
+        code={archDiagram}
+        caption="Collection and processing run on the endpoint; storage, real-time push, and reading run in infrastructure you own."
+      />
+    </div>
+  </section>
+
+  <!-- Right tool at every layer (engineering principle) -->
+  <section class="py-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-3xl text-center">
+        <div class="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
+          Engineering principle
+        </div>
+        <h2 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">The right tool at every layer</h2>
+        <p class="mt-5 text-lg text-gray-600">
+          A deliberate split: a compiled native binary where reliability matters most, Python and FastAPI where
+          iteration speed and ecosystem matter most. Each layer gets the tooling it deserves.
+        </p>
+      </div>
+
+      <div class="mt-16 grid gap-8 md:grid-cols-2">
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/40 p-8">
+          <div class="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+            On the device
+          </div>
+          <h3 class="mt-4 text-xl font-semibold text-gray-900">A single compiled binary that just runs</h3>
+          <p class="mt-3 text-gray-600">
+            Collection is Swift on Macintosh and C#/.NET on Windows, driven by osquery and native OS tooling. A
+            self-contained binary installs in seconds and runs unattended — built for the kind of
+            rock-solid reliability fleet collection demands, day after day, with nothing to babysit.
+          </p>
+          <ul class="mt-5 space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></span><span>Swift (Macintosh) and C#/.NET (Windows)</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></span><span>osquery + native OS APIs for fast, accurate collection</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></span><span>One self-contained binary — quick to deploy, nothing to maintain</span></li>
+          </ul>
+        </div>
+
+        <div class="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-8">
+          <div class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+            In your cloud
+          </div>
+          <h3 class="mt-4 text-xl font-semibold text-gray-900">Python &amp; FastAPI, where they shine</h3>
+          <p class="mt-3 text-gray-600">
+            The API layer is exactly where Python pays off: FastAPI gives us a typed, OpenAPI-documented event API
+            that's fast to extend and a pleasure to integrate against. Its rich ecosystem lives in the cloud you
+            control and upgrade on your own schedule.
+          </p>
+          <ul class="mt-5 space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500"></span><span>FastAPI with a full OpenAPI spec and interactive docs</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500"></span><span>Runs in a container, provisioned by Terraform on Azure or AWS</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500"></span><span>Upgraded centrally — endpoints are unaffected</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Layout>

@@ -20,10 +20,11 @@ const apiGroups = [
       <div class="inline-flex items-center rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-brand-700 shadow-sm">
         Everything it collects
       </div>
-      <h1 class="mt-5 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Ten modules. One schema.<br class="hidden sm:block" /> Macintosh and Windows.</h1>
+      <h1 class="mt-5 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Everything about every device.<br class="hidden sm:block" /> Macintosh and Windows.</h1>
       <p class="mx-auto mt-5 max-w-2xl text-lg text-gray-600">
-        Every module is collected and normalized at the endpoint, then stored as its own JSONB document and served
-        through the API. Here is exactly what lands in each one.
+        From the CPU and disk encryption to installed apps, Wi-Fi, the logged-in user, and managed software —
+        ReportMate captures a complete picture of every device, the same way on Mac and Windows. Here is exactly
+        what it collects.
       </p>
 
       <div class="mx-auto mt-10 max-w-4xl">
@@ -52,10 +53,7 @@ const apiGroups = [
               </svg>
             </div>
             <div>
-              <div class="flex items-baseline gap-2">
-                <span class="text-xs font-semibold text-gray-400">{String(i + 1).padStart(2, '0')}</span>
-                <h3 class="font-semibold text-gray-900">{name}</h3>
-              </div>
+              <h3 class="font-semibold text-gray-900">{name}</h3>
               <p class="mt-1.5 text-sm leading-relaxed text-gray-600">{fields}</p>
             </div>
           </div>
@@ -75,14 +73,32 @@ const apiGroups = [
       <li class="flex items-start gap-3"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span><span>Event payloads over HTTPS, authenticated per client</span></li>
       <li class="flex items-start gap-3"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span><span>Raw payloads retained and retrievable per event for audit and debugging</span></li>
     </ul>
-    <div slot="visual" class="rounded-2xl border border-brand-800 bg-brand-900/60 p-6 font-mono text-sm shadow-2xl">
-      <div class="space-y-2 text-brand-100">
-        <div><span class="text-green-400">POST</span> /api/v1/events <span class="text-brand-300">→ 202 Accepted</span></div>
-        <div class="text-brand-300">device C02XL0ABJGH7 · 10 modules</div>
-        <div class="border-t border-brand-800 pt-2 text-brand-300">push → dashboard</div>
+    <div slot="visual" class="overflow-hidden rounded-2xl border border-brand-800 bg-brand-900/70 font-mono text-sm shadow-2xl">
+      <div class="flex items-center gap-1.5 border-b border-brand-800 px-4 py-3">
+        <span class="h-3 w-3 rounded-full bg-red-400"></span>
+        <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
+        <span class="h-3 w-3 rounded-full bg-green-400"></span>
+        <span class="ml-2 text-xs text-brand-300">event stream</span>
+      </div>
+      <div class="space-y-3 p-5">
         <div class="flex items-center gap-2">
-          <span class="h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
-          <span>fleet view updated · 0.4s</span>
+          <span class="rounded bg-emerald-500/15 px-1.5 py-0.5 text-xs font-semibold text-emerald-300">POST</span>
+          <span class="text-brand-100">/api/v1/events</span>
+          <span class="ml-auto text-xs font-medium text-emerald-300">202 Accepted</span>
+        </div>
+        <div class="pl-1 text-xs text-brand-300">device C02XL0ABJGH7 · module documents received</div>
+        <div class="flex items-center gap-2 border-t border-brand-800 pt-3 text-brand-200">
+          <svg class="h-3.5 w-3.5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+          <span>stored in PostgreSQL</span>
+        </div>
+        <div class="flex items-center gap-2 text-brand-200">
+          <svg class="h-3.5 w-3.5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+          <span>pushed to dashboards over WebSocket</span>
+        </div>
+        <div class="flex items-center gap-2 rounded-lg bg-brand-800/60 px-3 py-2">
+          <span class="h-2 w-2 flex-shrink-0 animate-pulse rounded-full bg-green-400"></span>
+          <span class="text-green-300">fleet view updated</span>
+          <span class="ml-auto text-xs text-brand-300">0.4s</span>
         </div>
       </div>
     </div>
