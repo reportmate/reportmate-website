@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import FeatureBlock from '../components/FeatureBlock.astro';
 import BarsMark from '../components/dataviz/BarsMark.astro';
 import DonutMark from '../components/dataviz/DonutMark.astro';
 import Sparkline from '../components/dataviz/Sparkline.astro';
@@ -10,6 +11,28 @@ import { modules } from '../data/modules.js';
 const barColors = ['#0074c7', '#e0533a', '#f08a00', '#f4b400', '#16a596', '#7a4fa0'];
 const barWord = 'reporting';
 
+const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
+    -H "X-Client-Passphrase: $RM_KEY"
+
+{
+  "devices": [
+    {
+      "serialNumber": "C02XL0ABJGH7",
+      "deviceId": "9f2a1c7e-4b30-4d2a-bf1e-7c0a2d51e8a4",
+      "name": "design-studio-04",
+      "platform": "Macintosh",
+      "osName": "Macintosh",
+      "osVersion": "15.5",
+      "assetTag": "ECU-04821",
+      "department": "Design",
+      "status": "active",
+      "lastSeen": "2026-06-18T17:42:11Z",
+      "totalEvents": 1284
+    }
+  ],
+  "total": 327,
+  "hasMore": false
+}`;
 
 
 const attributions = [
@@ -170,13 +193,49 @@ const shots = [
     </div>
   </section>
 
-  <!-- Architecture teaser -->
-  <section class="py-20">
+  <!-- Event-driven & API-first -->
+  <FeatureBlock badge="Event-driven & API-first" title="If the dashboard can show it, your code can fetch it">
+    <p>
+      ReportMate is built API-first on FastAPI with a full OpenAPI specification. Devices ingest through the same
+      documented event API the dashboard reads from. Query a single device, pull bulk fleet analytics, stream
+      events, or wire ReportMate into your CMDB, SIEM, or automation.
+    </p>
+    <ul class="space-y-3 text-base">
+      <li class="flex items-start gap-3">
+        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
+        <span>40+ versioned <code class="rounded bg-brand-900 px-1.5 py-0.5 text-sm">/api/v1</code> endpoints with interactive OpenAPI docs</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
+        <span>Per-device and bulk fleet queries: hardware, applications, installs, identity, inventory</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
+        <span>Real-time event ingestion and a SignalR/WebSocket negotiate endpoint for live updates</span>
+      </li>
+    </ul>
+    <div class="pt-2">
+      <a href="/docs" class="inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-brand-900 hover:bg-gray-100">
+        Browse the API reference
+      </a>
+    </div>
+    <div slot="visual" class="rounded-2xl border border-brand-800 bg-brand-900/60 p-6 font-mono text-sm shadow-2xl">
+      <div class="mb-3 flex gap-1.5">
+        <span class="h-3 w-3 rounded-full bg-red-400"></span>
+        <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
+        <span class="h-3 w-3 rounded-full bg-green-400"></span>
+      </div>
+      <pre class="overflow-x-auto text-brand-100"><code>{curlExample}</code></pre>
+    </div>
+  </FeatureBlock>
+
+  <!-- Architecture CTA (under the API section) -->
+  <section class="py-16">
     <div class="mx-auto max-w-3xl px-6 text-center">
       <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Curious how it all fits together?</h2>
       <p class="mt-3 text-lg text-gray-600">
-        Native binaries on the endpoint, an event-driven REST API, a JSONB store, and real-time push — all deployed
-        in your own cloud.
+        Native binaries on the endpoint, an event-driven API, a JSONB store, and real-time push — all deployed in
+        your own cloud.
       </p>
       <a href="/architecture" class="mt-6 inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
         See the architecture
