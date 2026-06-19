@@ -24,6 +24,7 @@ const navIcon = {
 const leftNav = [
   { href: '/', label: 'Overview', icon: navIcon.overview },
   { href: '/features', label: 'Features', icon: navIcon.features },
+  { href: '/architecture', label: 'Architecture', icon: navIcon.api },
   { href: '/pricing', label: 'Pricing', icon: navIcon.pricing },
 ];
 ---
@@ -60,12 +61,12 @@ const leftNav = [
   <body class="min-h-screen bg-white text-gray-900 antialiased">
     <nav class="sticky top-0 z-50 border-b border-gray-200/70 bg-white/80 backdrop-blur-md">
       <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
-        <div class="flex items-center gap-5">
+        <div class="flex items-center gap-10">
           <a href="/" class="flex items-center gap-2.5">
             <img src="/reportmate-logo.png" alt="ReportMate" class="h-9 w-9" width="36" height="36" />
             <span class="hidden flex-col leading-tight sm:flex">
-              <span class="text-base font-bold tracking-tight text-gray-900">ReportMate</span>
-              <span class="text-[11px] font-medium text-gray-500">Endpoint Monitoring</span>
+              <span class="text-xl font-bold tracking-tight text-gray-900">ReportMate</span>
+              <span class="text-xs font-medium text-gray-500">Endpoint Monitoring</span>
             </span>
           </a>
           <div class="hidden items-center gap-7 md:flex">
