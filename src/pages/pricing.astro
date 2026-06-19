@@ -24,6 +24,7 @@ const tiers = [
     name: 'Cloud Starter',
     price: '$99',
     period: '/month',
+    annualNote: 'or $990/year — 2 months free',
     description: 'We host it. You manage your fleet.',
     features: [
       'Up to 100 endpoints',
@@ -42,6 +43,7 @@ const tiers = [
     name: 'Cloud Pro',
     price: '$499',
     period: '/month',
+    annualNote: 'or $4,990/year — 2 months free',
     description: 'Scale up with priority support and SSO.',
     features: [
       'Unlimited endpoints',
@@ -60,12 +62,13 @@ const tiers = [
     name: 'Enterprise',
     price: 'Custom',
     period: '',
-    description: 'Dedicated instance with onboarding and an SLA.',
+    description: 'Installation, configuration, and support — delivered as a package on dedicated infrastructure.',
     features: [
       'Everything in Pro',
       'Dedicated infrastructure',
-      'Guided onboarding & migration',
-      'SLA guarantee',
+      'Installation & configuration',
+      'Guided migration from MunkiReport / Sal',
+      'SLA-backed support package',
       'Phone + Slack support',
       'Custom integrations',
       'On-premise option',
@@ -97,13 +100,21 @@ const faqs = [
     q: 'How does endpoint counting work?',
     a: 'An endpoint is any Macintosh or Windows device reporting in. Self-hosted and Enterprise are unlimited. Cloud Starter is capped at 100 active devices; Cloud Pro is unlimited.',
   },
+  {
+    q: 'I want to self-host but still get help — can I?',
+    a: "Yes. Installation, configuration, and support are available as a package whether you run ReportMate yourself or let us manage it. We'll stand up your deployment, tune it to your fleet, migrate you off MunkiReport or Sal, and stay on call — without you giving up control of your data.",
+  },
+  {
+    q: 'What does an Enterprise engagement include?',
+    a: 'A scoped package: hands-on installation and configuration, guided migration from MunkiReport, Sal, or spreadsheets, a dedicated instance (managed by us or on-premise), an SLA, and named phone and Slack support. We size each engagement to your fleet — talk to us and we will put together a quote.',
+  },
 ];
 ---
 
 <Layout title="Pricing — ReportMate" description="Self-host ReportMate free on unlimited endpoints, or run it managed. Transparent, open-core pricing for Macintosh and Windows fleets.">
   <section class="bg-gradient-to-b from-brand-50 to-white">
     <div class="mx-auto max-w-6xl px-6 py-20 text-center">
-      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Open-core pricing</h1>
+      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Simple, transparent pricing</h1>
       <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
         Self-host the whole platform free, forever, on unlimited endpoints. Or let us run it for you. No per-seat
         traps, no locking your own data behind a paywall.
@@ -131,6 +142,7 @@ const faqs = [
               <span class="text-4xl font-bold text-gray-900">{tier.price}</span>
               {tier.period && <span class="text-gray-500">{tier.period}</span>}
             </div>
+            {tier.annualNote && <p class="mt-1 text-xs font-medium text-brand-600">{tier.annualNote}</p>}
             <p class="mt-2 text-sm text-gray-600">{tier.description}</p>
 
             <ul class="mt-8 flex-1 space-y-3">
