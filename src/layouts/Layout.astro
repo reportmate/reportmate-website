@@ -6,7 +6,7 @@ interface Props {
 
 const {
   title,
-  description = 'Open-source, cross-platform endpoint intelligence for macOS and Windows fleets. Native on-device collection, a real-time dashboard, and a full REST API. Self-host free or run it managed.',
+  description = 'Open-source, cross-platform endpoint intelligence for Macintosh and Windows fleets. Native on-device collection, a real-time dashboard, and a full REST API. Self-host free or run it managed.',
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -83,14 +83,14 @@ const ogImage = new URL('/reportmate-logo.png', Astro.site);
 
     <footer class="border-t border-gray-100 bg-gray-50">
       <div class="mx-auto max-w-6xl px-6 py-12">
-        <div class="grid gap-8 md:grid-cols-4">
-          <div>
+        <div class="grid gap-8 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
+          <div class="md:pr-8">
             <div class="flex items-center gap-2 font-bold text-gray-900">
               <img src="/reportmate-logo.png" alt="" class="h-7 w-7" width="28" height="28" />
               ReportMate
             </div>
-            <p class="mt-3 text-sm text-gray-600">
-              Open-source endpoint intelligence for macOS and Windows fleets. Collect everything on-device,
+            <p class="mt-3 max-w-xs text-sm text-gray-600">
+              Open-source endpoint intelligence for Macintosh and Windows fleets. Collect everything on-device,
               read it from one dashboard.
             </p>
           </div>
