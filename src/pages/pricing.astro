@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 
 // The full platform ships in every tier — no feature paywalls. Plans differ
 // only by who runs it, how it scales, and the level of support behind it.
-const includedEverywhere = 'The complete platform — all ten data modules, full REST API and webhooks, SSO / SAML, real-time dashboard. No feature paywalls.';
+const includedEverywhere = 'The complete platform — every data module, full REST API and webhooks, SSO / SAML, real-time dashboard. No feature paywalls.';
 
 const tiers = [
   {
@@ -13,7 +13,7 @@ const tiers = [
     description: 'Run the whole platform on your own infrastructure.',
     features: [
       'Unlimited endpoints',
-      'All ten data modules',
+      'Every data module',
       'Full REST API & webhooks',
       'SSO / SAML',
       'Terraform modules (Azure + AWS)',
@@ -186,18 +186,18 @@ const faqs = [
           </div>
         ))}
       </div>
-      <p class="mx-auto mt-10 max-w-2xl text-center text-sm text-gray-500">
-        {includedEverywhere} You pay for who runs it, how it scales, and the support behind it — never to unlock your own data.
-      </p>
-      <p class="mt-4 text-center text-sm text-gray-500">
-        Managed Cloud plans are in early access — join the waitlist and we'll reach out as spots open.
-      </p>
     </div>
   </section>
 
-  <!-- Services & support -->
-  <section class="border-t border-gray-100 bg-white py-20">
-    <div class="mx-auto max-w-6xl px-6">
+  <!-- Platform note + Services & support -->
+  <section class="bg-white pb-24">
+    <div class="mx-auto max-w-6xl space-y-8 px-6">
+      <div class="rounded-2xl border border-gray-200 bg-gray-50 px-8 py-10 text-center">
+        <p class="mx-auto max-w-3xl text-base text-gray-600">
+          {includedEverywhere} You pay for who runs it, how it scales, and the support behind it — never to unlock your own data.
+        </p>
+      </div>
+
       <div class="overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white shadow-lg shadow-brand-500/10">
         <div class="p-8 sm:p-12">
           <div class="max-w-2xl">
