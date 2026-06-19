@@ -2,18 +2,25 @@
 // `short` is the marketing one-liner; `fields` is the full collection breakdown.
 export const modules = [
 {
+    name: 'Inventory',
+    accent: 'bg-amber-50 text-amber-600',
+    icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
+    short: 'Asset tag, assigned owner, department, location, device name, manufacturer, purchase metadata.',
+    fields: 'Asset tag, assigned owner, department, location, device name, manufacturer, model, and purchase metadata for asset reconciliation.',
+  },
+{
     name: 'Installs',
     accent: 'bg-emerald-50 text-emerald-600',
     icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4',
     short: 'Managed software from Cimian and Munki: target vs installed version, pending, installed, failed, logs.',
-    fields: 'Managed software state from Cimian (Windows) and Munki (macOS): item name, target vs installed version, pending, installed, failed, plus install-session history and logs.',
+    fields: 'Managed software state from Cimian (Windows) and Munki (Macintosh): item name, target vs installed version, pending, installed, failed, plus install-session history and logs.',
   },
 {
     name: 'Applications',
     accent: 'bg-blue-50 text-blue-600',
     icon: 'M19 12.2H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V10.2a2 2 0 00-2-2M5 12.2V10.2a2 2 0 012-2m0 0V6.2a2 2 0 012-2h6a2 2 0 012 2v2M7 8.2h10',
-    short: 'Installed apps, versions, bundle IDs / product codes, publishers, install dates — Mac and Windows.',
-    fields: 'Installed applications with version, bundle identifier or product code, publisher, install date and size — normalized across Mac and Windows.',
+    short: 'Installed apps, versions, bundle IDs / product codes, publishers, install dates — Macintosh and Windows.',
+    fields: 'Installed applications with version, bundle identifier or product code, publisher, install date and size — normalized across Macintosh and Windows.',
   },
 {
     name: 'System',
@@ -63,12 +70,5 @@ export const modules = [
     icon: 'M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0',
     short: 'Interfaces, IPv4/IPv6, MAC, DNS, gateways, Wi-Fi SSID with band/channel/width, signal, VPN.',
     fields: 'Active connection, all interfaces, IPv4/IPv6, MAC addresses, DNS servers, gateways, Wi-Fi SSID with band/channel/width/protocol, signal strength, VPN status.',
-  },
-{
-    name: 'Inventory',
-    accent: 'bg-amber-50 text-amber-600',
-    icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
-    short: 'Asset tag, assigned owner, department, location, device name, manufacturer, purchase metadata.',
-    fields: 'Asset tag, assigned owner, department, location, device name, manufacturer, model, and purchase metadata for asset reconciliation.',
   },
 ];
