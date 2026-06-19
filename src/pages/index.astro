@@ -7,8 +7,8 @@ import { modules } from '../data/modules.js';
 const archDiagram = `flowchart TB
   subgraph EP["① &nbsp;ENDPOINTS — collect &amp; process on-device"]
     direction LR
-    MAC["<b>Macintosh</b><br/>native ReportMate binary<br/><small>Swift · launchd · signed &amp; notarized</small>"]
-    WIN["<b>Windows</b><br/>native ReportMate binary<br/><small>C# / .NET · service + task · signed</small>"]
+    MAC["<b>Macintosh</b><br/>native ReportMate binary<br/><small>Swift · launchd</small>"]
+    WIN["<b>Windows</b><br/>native ReportMate binary<br/><small>C# / .NET · service + task</small>"]
     MAC ~~~ WIN
   end
 
@@ -333,11 +333,11 @@ const shots = [
           <h3 class="mt-4 text-xl font-semibold text-gray-900">A single compiled binary that just runs</h3>
           <p class="mt-3 text-gray-600">
             Collection is Swift on Macintosh and C#/.NET on Windows, driven by osquery and native OS tooling. A
-            signed, self-contained binary installs in seconds and runs unattended — built for the kind of
+            self-contained binary installs in seconds and runs unattended — built for the kind of
             rock-solid reliability fleet collection demands, day after day, with nothing to babysit.
           </p>
           <ul class="mt-5 space-y-2 text-sm text-gray-600">
-            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></span><span>Swift (Macintosh) and C#/.NET (Windows), signed and notarized</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></span><span>Swift (Macintosh) and C#/.NET (Windows)</span></li>
             <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></span><span>osquery + native OS APIs for fast, accurate collection</span></li>
             <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></span><span>One self-contained binary — quick to deploy, nothing to maintain</span></li>
           </ul>
