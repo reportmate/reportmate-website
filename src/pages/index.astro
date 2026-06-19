@@ -123,16 +123,15 @@ const shots = [
       </p>
 
       <div class="mx-auto mt-16 max-w-5xl">
-        <div class="overflow-hidden rounded-2xl border border-gray-200 shadow-2xl shadow-brand-900/10 ring-1 ring-black/5">
-          <img
-            src="/dashboard.webp"
-            alt="ReportMate fleet dashboard showing device counts, live events, and platform distribution"
-            width="2494"
-            height="1832"
-            class="w-full"
-            loading="eager"
-          />
-        </div>
+        <img
+          src="/dashboard.webp"
+          alt="ReportMate fleet dashboard showing device counts, live events, and platform distribution"
+          width="2494"
+          height="1832"
+          class="w-full cursor-zoom-in"
+          loading="eager"
+          data-lightbox
+        />
       </div>
     </div>
   </section>
@@ -205,22 +204,23 @@ const shots = [
         </p>
       </div>
 
-      <div class="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-gray-200 shadow-2xl shadow-brand-900/10 ring-1 ring-black/5">
+      <div class="mx-auto mt-12 max-w-4xl">
         <img
           src="/device-hardware.webp"
           alt="ReportMate device hardware view showing CPU, memory, storage, battery, GPU and NPU"
           width="2494"
           height="1832"
-          class="w-full"
+          class="w-full cursor-zoom-in"
           loading="lazy"
+          data-lightbox
         />
       </div>
 
-      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="mt-8 grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
         {shots.map(({ src, cap }) => (
-          <figure class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-            <img src={src} alt={cap} width="2494" height="1832" class="w-full" loading="lazy" />
-            <figcaption class="border-t border-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600">{cap}</figcaption>
+          <figure>
+            <img src={src} alt={cap} width="2494" height="1832" class="w-full cursor-zoom-in" loading="lazy" data-lightbox />
+            <figcaption class="mt-2 text-center text-sm font-medium text-gray-600">{cap}</figcaption>
           </figure>
         ))}
       </div>
