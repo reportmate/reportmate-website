@@ -16,7 +16,7 @@ const apiGroups = [
 <Layout title="Features — ReportMate" description="Ten data modules collected on-device, an event-driven REST API, a real-time dashboard, and Terraform deployment for Macintosh and Windows fleets.">
   <!-- Hero -->
   <section class="bg-gradient-to-b from-brand-50 to-white">
-    <div class="mx-auto max-w-6xl px-6 py-20 text-center">
+    <div class="mx-auto max-w-6xl px-6 pb-0 pt-20 text-center">
       <div class="inline-flex items-center rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-brand-700 shadow-sm">
         Everything it collects
       </div>
@@ -26,7 +26,7 @@ const apiGroups = [
         through the API. Here is exactly what lands in each one.
       </p>
 
-      <div class="mx-auto mt-14 max-w-4xl">
+      <div class="mx-auto mt-10 max-w-4xl">
         <img
           src="/device-inventory.webp"
           alt="ReportMate device detail view with the module tab bar and inventory overview"
@@ -41,7 +41,7 @@ const apiGroups = [
   </section>
 
   <!-- Module deep-dive -->
-  <section class="py-20">
+  <section class="pb-20 pt-8">
     <div class="mx-auto max-w-6xl px-6">
       <div class="grid gap-6 md:grid-cols-2">
         {modules.map(({ name, fields, accent, icon }, i) => (
