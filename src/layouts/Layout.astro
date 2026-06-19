@@ -11,6 +11,19 @@ const {
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/reportmate-logo.png', Astro.site);
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const navIcon = {
+  overview: 'm2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.5a.75.75 0 0 0 .75.75h4.5a.75.75 0 0 0 .75-.75V15a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75v5.25c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75V9.75',
+  features: 'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z',
+  pricing: 'M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3ZM6 6h.008v.008H6V6Z',
+  api: 'M14.25 9.75 16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z',
+};
+const leftNav = [
+  { href: '/', label: 'Overview', icon: navIcon.overview },
+  { href: '/features', label: 'Features', icon: navIcon.features },
+  { href: '/pricing', label: 'Pricing', icon: navIcon.pricing },
+];
 ---
 
 <!doctype html>
@@ -44,37 +57,60 @@ const ogImage = new URL('/reportmate-logo.png', Astro.site);
   </head>
   <body class="min-h-screen bg-white text-gray-900 antialiased">
     <nav class="sticky top-0 z-50 border-b border-gray-200/70 bg-white/80 backdrop-blur-md">
-      <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <a href="/" class="flex items-center gap-2.5">
-          <img src="/reportmate-logo.png" alt="ReportMate" class="h-9 w-9" width="36" height="36" />
-          <span class="flex flex-col leading-tight">
-            <span class="text-base font-bold tracking-tight text-gray-900">ReportMate</span>
-            <span class="text-[11px] font-medium text-gray-500">Endpoint Monitoring</span>
-          </span>
-        </a>
-        <div class="hidden items-center gap-1 md:flex">
-          <a href="/features" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900">Features</a>
-          <a href="/pricing" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900">Pricing</a>
-          <a href="/docs" class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900">API Docs</a>
+      <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
+        <div class="flex items-center gap-5">
+          <a href="/" class="flex items-center gap-2.5">
+            <img src="/reportmate-logo.png" alt="ReportMate" class="h-9 w-9" width="36" height="36" />
+            <span class="hidden flex-col leading-tight sm:flex">
+              <span class="text-base font-bold tracking-tight text-gray-900">ReportMate</span>
+              <span class="text-[11px] font-medium text-gray-500">Endpoint Monitoring</span>
+            </span>
+          </a>
+          <div class="hidden items-center gap-1.5 md:flex">
+            {leftNav.map(({ href, label, icon }) => (
+              <a
+                href={href}
+                class:list={[
+                  'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium shadow-sm transition',
+                  path === href
+                    ? 'border-brand-200 bg-brand-50 text-brand-700'
+                    : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900',
+                ]}
+              >
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d={icon} /></svg>
+                {label}
+              </a>
+            ))}
+          </div>
         </div>
         <div class="flex items-center gap-1.5">
           <a
+            href="/docs"
+            class:list={[
+              'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium shadow-sm transition',
+              path === '/docs'
+                ? 'border-brand-200 bg-brand-50 text-brand-700'
+                : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900',
+            ]}
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d={navIcon.api} /></svg>
+            API
+          </a>
+          <a
             href="https://github.com/reportmate"
-            class="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+            class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
           >
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
             </svg>
-            GitHub
+            <span class="hidden sm:inline">GitHub</span>
           </a>
           <a
             href="https://demo.reportmate.app"
-            class="group inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-white/10 transition hover:bg-brand-700 hover:shadow"
+            class="group inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-white/10 transition hover:bg-brand-700 hover:shadow"
           >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 0 1 0 1.971l-11.54 6.347a1.125 1.125 0 0 1-1.667-.985V5.653Z" /></svg>
             Try the Demo
-            <svg class="h-4 w-4 transition group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7" />
-            </svg>
           </a>
         </div>
       </div>
