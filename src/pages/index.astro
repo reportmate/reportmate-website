@@ -4,49 +4,46 @@ import Mermaid from '../components/Mermaid.astro';
 import FeatureBlock from '../components/FeatureBlock.astro';
 import { modules } from '../data/modules.js';
 
-const archDiagram = `flowchart LR
-  subgraph EP["ENDPOINTS — collect &amp; process locally"]
-    direction TB
-    MAC["macOS client<br/><small>native Swift</small>"]
-    WIN["Windows client<br/><small>C# / .NET</small>"]
-    OSQ(["osquery + native system APIs"])
-    SCH[/"launchd · service + scheduled task"/]
+const archDiagram = `flowchart TB
+  subgraph EP["① &nbsp;ENDPOINTS — collect &amp; process on-device"]
+    direction LR
+    MAC["<b>macOS</b><br/>native Swift binary<br/><small>launchd · signed &amp; notarized</small>"]
+    OSQ(["<b>osquery</b><br/>+ macadmins extension<br/>+ native OS APIs"])
+    WIN["<b>Windows</b><br/>C# / .NET binary<br/><small>service + task · signed</small>"]
     MAC --- OSQ
-    WIN --- OSQ
-    SCH -.schedules.-> MAC
-    SCH -.schedules.-> WIN
+    OSQ --- WIN
   end
 
-  PAY{{"signed payload<br/>10 module documents"}}
-  MAC --> PAY
-  WIN --> PAY
+  PAY{{"<b>one signed event payload</b><br/>10 module documents<br/><small>hardware · system · network · security · applications<br/>installs · inventory · management · identity · peripherals</small>"}}
+  EP ==> PAY
 
-  subgraph CLOUD["YOUR CLOUD — Terraform: Azure or AWS"]
-    direction TB
-    API["FastAPI<br/>ingest + REST /api/v1"]
-    DB[("PostgreSQL<br/>JSONB per module")]
-    RT(["SignalR / WebSocket"])
+  subgraph CLOUD["② &nbsp;YOUR CLOUD — Terraform on Azure or AWS"]
+    direction LR
+    API["<b>FastAPI</b><br/>ingest + REST /api/v1<br/><small>40+ endpoints · OpenAPI</small>"]
+    DB[("<b>PostgreSQL</b><br/>JSONB per module")]
+    RT(["<b>SignalR / Web PubSub</b><br/>real-time push"])
     API --> DB
     API --> RT
   end
-  PAY ==>|"HTTPS · X-Client-Passphrase"| API
+  PAY ==>|"HTTPS POST /api/v1/events<br/>X-Client-Passphrase"| API
 
-  subgraph READ["READ &amp; INTEGRATE"]
-    direction TB
-    WEB["Next.js dashboard<br/><small>live fleet view</small>"]
-    APPS["Native Mac &amp; Windows apps<br/><small>coming soon</small>"]
-    INT["Your CMDB · SIEM · automation"]
+  subgraph READ["③ &nbsp;READ — web, native &amp; your tools"]
+    direction LR
+    WEB["<b>Next.js dashboard</b><br/><small>live fleet view</small>"]
+    APPS["<b>Native Mac &amp; Windows apps</b><br/><small>coming soon</small>"]
+    INT["<b>CMDB · SIEM · automation</b><br/><small>via REST API</small>"]
   end
-  DB --> WEB
+  DB ==> WEB
   RT ==> WEB
-  API --> INT
-  DB -.-> APPS
+  DB ==> APPS
+  RT ==> APPS
+  API ==> INT
 
   classDef ep fill:#eff6ff,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
-  classDef pay fill:#0074c7,stroke:#015da1,stroke-width:2px,color:#ffffff;
+  classDef pay fill:#0074c7,stroke:#015da1,stroke-width:2.5px,color:#ffffff;
   classDef cloud fill:#ecfdf5,stroke:#059669,stroke-width:2px,color:#065f46;
   classDef read fill:#fff7ed,stroke:#ea580c,stroke-width:2px,color:#9a3412;
-  class MAC,WIN,OSQ,SCH ep;
+  class MAC,WIN,OSQ ep;
   class PAY pay;
   class API,DB,RT cloud;
   class WEB,APPS,INT read;
@@ -77,6 +74,17 @@ const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
   "total": 327,
   "hasMore": false
 }`;
+
+const attributions = [
+  { name: 'osquery', desc: 'The SQL-powered engine behind on-device collection.', href: 'https://www.osquery.io' },
+  { name: 'MacAdmins osquery extension', desc: 'Extra macOS tables for richer Mac telemetry.', href: 'https://github.com/macadmins/osquery-extension' },
+  { name: 'FastAPI', desc: 'Powers the event ingest and REST API.', href: 'https://fastapi.tiangolo.com' },
+  { name: 'Next.js', desc: 'Renders the real-time fleet dashboard.', href: 'https://nextjs.org' },
+  { name: 'PostgreSQL', desc: 'JSONB storage — one document per module.', href: 'https://www.postgresql.org' },
+  { name: 'Terraform', desc: 'Provisions ReportMate into Azure or AWS.', href: 'https://www.terraform.io' },
+  { name: 'Munki', desc: 'macOS managed installs, surfaced in the Installs module.', href: 'https://www.munki.org' },
+  { name: 'Cimian', desc: 'Windows managed installs, surfaced in the Installs module.', href: 'https://github.com/windowsadmins/cimian' },
+];
 ---
 
 <Layout title="ReportMate — Open-Source Endpoint Intelligence for Mac & Windows">
@@ -144,9 +152,9 @@ const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
         </p>
       </div>
 
-      <div class="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="mt-16 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         {modules.map(({ name, short, accent, icon }) => (
-          <div class="group rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg">
+          <div class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg">
             <div class:list={['flex h-11 w-11 items-center justify-center rounded-xl', accent]}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-6 w-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d={icon} />
@@ -165,51 +173,39 @@ const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
     </div>
   </section>
 
-  <!-- How it works (dark feature block) -->
-  <FeatureBlock badge="On-device processing" title="The work happens on the device, not in the cloud">
+  <!-- Event-driven & API-first (moved directly under the modules) -->
+  <FeatureBlock badge="Event-driven & API-first" title="If the dashboard can show it, your code can fetch it">
     <p>
-      Most platforms ship raw telemetry to a server and bill you to crunch it. ReportMate flips that: the native
-      client builds a clean, structured report locally. The backend just stores and serves it — so it scales to
-      thousands of devices without a heavy processing tier.
+      ReportMate is built API-first on FastAPI with a full OpenAPI specification. Devices ingest through the same
+      documented event API the dashboard reads from. Query a single device, pull bulk fleet analytics, stream
+      events, or wire ReportMate into your CMDB, SIEM, or automation.
     </p>
     <ul class="space-y-3 text-base">
       <li class="flex items-start gap-3">
         <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
-        <span>Native Swift (macOS) and C#/.NET (Windows) binaries, signed and scheduled by the OS</span>
+        <span>40+ versioned <code class="rounded bg-brand-900 px-1.5 py-0.5 text-sm">/api/v1</code> endpoints with interactive OpenAPI docs</span>
       </li>
       <li class="flex items-start gap-3">
         <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
-        <span>osquery and platform APIs normalized into ten module documents on the endpoint</span>
+        <span>Per-device and bulk fleet queries: hardware, applications, installs, identity, inventory</span>
       </li>
       <li class="flex items-start gap-3">
         <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
-        <span>A signed event payload posts over HTTPS — the dashboard reflects it the moment it lands</span>
+        <span>Real-time event ingestion and a SignalR/WebSocket negotiate endpoint for live updates</span>
       </li>
     </ul>
-    <div slot="visual" class="rounded-2xl border border-brand-800 bg-brand-900/50 p-6 shadow-2xl">
-      <ol class="space-y-4">
-        <li class="flex gap-4">
-          <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">1</span>
-          <div>
-            <div class="font-semibold text-white">Collect &amp; process</div>
-            <div class="text-sm text-brand-200">Hardware, security, network, software — gathered and normalized locally.</div>
-          </div>
-        </li>
-        <li class="flex gap-4">
-          <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">2</span>
-          <div>
-            <div class="font-semibold text-white">Transmit a signed event</div>
-            <div class="text-sm text-brand-200">One payload over HTTPS, passphrase-authenticated, on a schedule.</div>
-          </div>
-        </li>
-        <li class="flex gap-4">
-          <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">3</span>
-          <div>
-            <div class="font-semibold text-white">Read in real time</div>
-            <div class="text-sm text-brand-200">Stored as JSONB, pushed to the dashboard over WebSocket, exposed via the API.</div>
-          </div>
-        </li>
-      </ol>
+    <div class="pt-2">
+      <a href="/docs" class="inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-brand-900 hover:bg-gray-100">
+        Browse the API reference
+      </a>
+    </div>
+    <div slot="visual" class="rounded-2xl border border-brand-800 bg-brand-900/60 p-6 font-mono text-sm shadow-2xl">
+      <div class="mb-3 flex gap-1.5">
+        <span class="h-3 w-3 rounded-full bg-red-400"></span>
+        <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
+        <span class="h-3 w-3 rounded-full bg-green-400"></span>
+      </div>
+      <pre class="overflow-x-auto text-brand-100"><code>{curlExample}</code></pre>
     </div>
   </FeatureBlock>
 
@@ -218,24 +214,25 @@ const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
     <div class="mx-auto max-w-6xl px-6">
       <div class="mx-auto max-w-3xl text-center">
         <div class="inline-flex items-center rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-brand-700">
-          End-to-end architecture
+          End-to-end &amp; self-hosted
         </div>
-        <h2 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">One pipeline, nothing hidden</h2>
+        <h2 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Own the whole pipeline, end to end</h2>
         <p class="mt-5 text-lg text-gray-600">
-          Native binaries, an event-driven API, a JSONB store, real-time push, and Terraform to stand it all up in
-          your own cloud. Every layer is yours to read, audit, and extend.
+          The entire stack — native binaries, event-driven API, JSONB store, real-time push — deploys into your own
+          Azure or AWS tenant with Terraform, in an afternoon. No per-layer vendors to license, every layer yours to
+          audit and extend, and your fleet data never leaves infrastructure you control.
         </p>
       </div>
 
       <!-- Five-stage pipeline stepper -->
       <ol class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {[
-          { n: '1', verb: 'Collect', where: 'on the device', desc: 'osquery + native OS tooling' },
-          { n: '2', verb: 'Transmit', where: 'on the device', desc: 'signed event over HTTPS' },
-          { n: '3', verb: 'Ingest', where: 'in your cloud', desc: 'FastAPI /api/v1/events' },
-          { n: '4', verb: 'Store', where: 'in your cloud', desc: 'PostgreSQL, JSONB per module' },
-          { n: '5', verb: 'Read', where: 'in your cloud', desc: 'dashboard · API · real-time' },
-        ].map(({ n, verb, where, desc }) => (
+          { n: '1', verb: 'Collect', where: 'on the device', tone: 'device', desc: 'osquery + native OS tooling' },
+          { n: '2', verb: 'Transmit', where: 'on the device', tone: 'device', desc: 'signed event over HTTPS' },
+          { n: '3', verb: 'Ingest', where: 'in your cloud', tone: 'cloud', desc: 'FastAPI /api/v1/events' },
+          { n: '4', verb: 'Store', where: 'in your cloud', tone: 'cloud', desc: 'PostgreSQL, JSONB per module' },
+          { n: '5', verb: 'Read', where: 'web + native apps', tone: 'read', desc: 'dashboard, native apps & API' },
+        ].map(({ n, verb, where, tone, desc }) => (
           <li class="relative rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <div class="flex items-center gap-2">
               <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">{n}</span>
@@ -243,7 +240,7 @@ const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
             </div>
             <div class:list={[
               'mt-3 inline-block rounded-full px-2 py-0.5 text-xs font-medium',
-              where === 'on the device' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700',
+              tone === 'device' ? 'bg-blue-50 text-blue-700' : tone === 'cloud' ? 'bg-emerald-50 text-emerald-700' : 'bg-violet-50 text-violet-700',
             ]}>{where}</div>
             <p class="mt-2 text-sm text-gray-600">{desc}</p>
           </li>
@@ -311,42 +308,6 @@ const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
     </div>
   </section>
 
-  <!-- REST API (dark feature block — the loved template) -->
-  <FeatureBlock badge="Event-driven & API-first" title="If the dashboard can show it, your code can fetch it">
-    <p>
-      ReportMate is built API-first on FastAPI with a full OpenAPI specification. Devices ingest through the same
-      documented event API the dashboard reads from. Query a single device, pull bulk fleet analytics, stream
-      events, or wire ReportMate into your CMDB, SIEM, or automation.
-    </p>
-    <ul class="space-y-3 text-base">
-      <li class="flex items-start gap-3">
-        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
-        <span>40+ versioned <code class="rounded bg-brand-900 px-1.5 py-0.5 text-sm">/api/v1</code> endpoints with interactive OpenAPI docs</span>
-      </li>
-      <li class="flex items-start gap-3">
-        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
-        <span>Per-device and bulk fleet queries: hardware, applications, installs, identity, inventory</span>
-      </li>
-      <li class="flex items-start gap-3">
-        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
-        <span>Real-time event ingestion and a SignalR/WebSocket negotiate endpoint for live updates</span>
-      </li>
-    </ul>
-    <div class="pt-2">
-      <a href="/docs" class="inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-brand-900 hover:bg-gray-100">
-        Browse the API reference
-      </a>
-    </div>
-    <div slot="visual" class="rounded-2xl border border-brand-800 bg-brand-900/60 p-6 font-mono text-sm shadow-2xl">
-      <div class="mb-3 flex gap-1.5">
-        <span class="h-3 w-3 rounded-full bg-red-400"></span>
-        <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
-        <span class="h-3 w-3 rounded-full bg-green-400"></span>
-      </div>
-      <pre class="overflow-x-auto text-brand-100"><code>{curlExample}</code></pre>
-    </div>
-  </FeatureBlock>
-
   <!-- Why ReportMate -->
   <section class="py-24">
     <div class="mx-auto max-w-6xl px-6">
@@ -375,6 +336,37 @@ const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
             data lives in plain PostgreSQL you can query directly.
           </p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Built on open source -->
+  <section class="border-t border-gray-100 bg-gray-50 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Built on open source</h2>
+        <p class="mt-4 text-gray-600">
+          ReportMate stands on the shoulders of the tools our community already trusts — and integrates with the
+          managed-software systems you may already run.
+        </p>
+      </div>
+      <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {attributions.map(({ name, desc, href }) => (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md"
+          >
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold text-gray-900">{name}</h3>
+              <svg class="h-4 w-4 text-gray-300 transition group-hover:text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+              </svg>
+            </div>
+            <p class="mt-2 text-sm leading-relaxed text-gray-600">{desc}</p>
+          </a>
+        ))}
       </div>
     </div>
   </section>
