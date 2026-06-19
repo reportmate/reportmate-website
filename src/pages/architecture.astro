@@ -74,32 +74,18 @@ const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
 ---
 
 <Layout title="Architecture — ReportMate" description="How ReportMate works: native on-device collection, an event-driven REST API, a JSONB store, real-time push, and Terraform deployment into your own cloud.">
-  <!-- Hero -->
+  <!-- Hero + pipeline (integrated) -->
   <section class="bg-gradient-to-b from-brand-50 to-white">
-    <div class="mx-auto max-w-6xl px-6 py-20 text-center">
-      <div class="inline-flex items-center rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-brand-700 shadow-sm">
-        Under the hood
-      </div>
-      <h1 class="mt-5 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">How ReportMate works</h1>
-      <p class="mx-auto mt-5 max-w-2xl text-lg text-gray-600">
-        Native binaries collect and process on the endpoint, then stream events to an API, store, and dashboard you
-        run in your own cloud. Every layer is yours to read, audit, and extend — nothing is a black box.
-      </p>
-    </div>
-  </section>
-
-  <!-- Architecture diagram -->
-  <section class="border-y border-gray-100 bg-gray-50 py-24">
-    <div class="mx-auto max-w-6xl px-6">
+    <div class="mx-auto max-w-6xl px-6 py-20">
       <div class="mx-auto max-w-3xl text-center">
-        <div class="inline-flex items-center rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-brand-700">
-          End-to-end &amp; self-hosted
+        <div class="inline-flex items-center rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-brand-700 shadow-sm">
+          Under the hood
         </div>
-        <h2 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Own the whole pipeline, end to end</h2>
-        <p class="mt-5 text-lg text-gray-600">
-          The entire stack — native binaries, event-driven API, JSONB store, real-time push — deploys into your own
-          Azure or AWS tenant with Terraform, in an afternoon. No per-layer vendors to license, every layer yours to
-          audit and extend, and your fleet data never leaves infrastructure you control.
+        <h1 class="mt-5 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">How ReportMate works</h1>
+        <p class="mx-auto mt-5 max-w-2xl text-lg text-gray-600">
+          Native binaries collect and process on each device, then stream events to an API, store, and dashboard
+          that run in your own Azure or AWS tenant — deployed with Terraform in an afternoon. Every layer is yours
+          to read, audit, and extend, and your fleet data never leaves infrastructure you control.
         </p>
       </div>
 
@@ -126,13 +112,16 @@ const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
           ))}
         </ol>
       </div>
+    </div>
+  </section>
 
-      <div class="mt-12">
-        <Mermaid
-          code={archDiagram}
-          caption="Collection and processing run on the endpoint; storage, real-time push, and reading run in infrastructure you own."
-        />
-      </div>
+  <!-- Architecture diagram -->
+  <section class="border-y border-gray-100 bg-gray-50 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <Mermaid
+        code={archDiagram}
+        caption="Collection and processing run on the endpoint; storage, real-time push, and reading run in infrastructure you own."
+      />
     </div>
   </section>
 
