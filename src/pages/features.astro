@@ -1,48 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
-
-const modules = [
-  {
-    name: 'Hardware',
-    fields: 'Model & model identifier, manufacturer, serial number, CPU/SoC, performance & efficiency core counts, Neural Engine (NPU), GPU, total RAM with per-module manufacturer and type, storage devices, battery health & cycle count, thermals.',
-  },
-  {
-    name: 'System',
-    fields: 'OS name, version & build, patch level, rapid security responses, uptime, boot time, kernel version, architecture, locale, time zone.',
-  },
-  {
-    name: 'Network',
-    fields: 'Active connection, all interfaces, IPv4/IPv6, MAC addresses, DNS servers, gateways, Wi-Fi SSID with band/channel/width/protocol, signal strength, VPN status.',
-  },
-  {
-    name: 'Security',
-    fields: 'FileVault / BitLocker encryption state, firewall, System Integrity Protection, Gatekeeper, secure/measured boot, TPM, XProtect, and presence of endpoint protection.',
-  },
-  {
-    name: 'Applications',
-    fields: 'Installed applications with version, bundle identifier or product code, publisher, install date and size — normalized across Mac and Windows.',
-  },
-  {
-    name: 'Installs',
-    fields: 'Managed software state from Cimian (Windows) and Munki (macOS): item name, target vs installed version, pending, installed, failed, plus install-session history and logs.',
-  },
-  {
-    name: 'Inventory',
-    fields: 'Asset tag, assigned owner, department, location, device name, manufacturer, model, and purchase metadata for asset reconciliation.',
-  },
-  {
-    name: 'Management',
-    fields: 'MDM enrollment & vendor, supervision, configuration profiles, installed certificates, and managed-status — including profiles collected inline.',
-  },
-  {
-    name: 'Identity',
-    fields: 'Console / logged-in user, full name, local and directory accounts, home directory, Entra ID / Active Directory join, and shared-device detection.',
-  },
-  {
-    name: 'Peripherals',
-    fields: 'Displays (resolution, scaling, connection), printers (driver, default, network), and connected USB and Bluetooth devices — displays and printers collected within peripherals.',
-  },
-];
+import FeatureBlock from '../components/FeatureBlock.astro';
+import { modules } from '../data/modules.js';
 
 const apiGroups = [
   { tag: 'Devices', desc: 'Per-device detail, fast info, events, install logs, usage history, and any single module document.', sample: 'GET /api/v1/device/{serial}/modules/{module}' },
@@ -54,37 +13,43 @@ const apiGroups = [
 ];
 ---
 
-<Layout title="Features — ReportMate" description="Full feature breakdown: ten data modules, an event-driven REST API, real-time dashboard, and Terraform deployment for macOS and Windows fleets.">
+<Layout title="Features — ReportMate" description="Ten data modules collected on-device, an event-driven REST API, a real-time dashboard, and Terraform deployment for macOS and Windows fleets.">
+  <!-- Hero -->
   <section class="bg-gradient-to-b from-brand-50 to-white">
     <div class="mx-auto max-w-6xl px-6 py-20 text-center">
-      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Everything ReportMate collects</h1>
-      <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-        Ten module reports per device, built on-device and identical across Mac and Windows. An event-driven REST
-        API on top. A real-time dashboard in front. Terraform underneath.
+      <div class="inline-flex items-center rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-brand-700 shadow-sm">
+        Everything it collects
+      </div>
+      <h1 class="mt-5 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Ten modules. One schema.<br class="hidden sm:block" /> Mac and Windows.</h1>
+      <p class="mx-auto mt-5 max-w-2xl text-lg text-gray-600">
+        Every module is collected and normalized at the endpoint, then stored as its own JSONB document and served
+        through the API. Here is exactly what lands in each one.
       </p>
     </div>
   </section>
 
-  <!-- Modules -->
+  <!-- Module deep-dive -->
   <section class="py-20">
     <div class="mx-auto max-w-6xl px-6">
-      <h2 class="text-2xl font-bold text-gray-900">The ten data modules</h2>
-      <p class="mt-3 max-w-3xl text-gray-600">
-        Each module is collected and normalized at the endpoint, then stored as its own JSONB document. One file per
-        module, one schema across platforms.
-      </p>
-      <div class="mt-10 space-y-4">
-        {modules.map(({ name, fields }, i) => (
-          <div class="flex flex-col gap-2 rounded-xl border border-gray-100 p-6 sm:flex-row sm:gap-6">
-            <div class="flex items-start gap-3 sm:w-48 sm:flex-shrink-0">
-              <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-brand-100 text-sm font-semibold text-brand-700">{i + 1}</span>
-              <h3 class="mt-0.5 font-semibold text-gray-900">{name}</h3>
+      <div class="grid gap-6 md:grid-cols-2">
+        {modules.map(({ name, fields, accent, icon }, i) => (
+          <div class="flex gap-5 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <div class:list={['flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl', accent]}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d={icon} />
+              </svg>
             </div>
-            <p class="text-sm leading-relaxed text-gray-600">{fields}</p>
+            <div>
+              <div class="flex items-baseline gap-2">
+                <span class="text-xs font-semibold text-gray-400">{String(i + 1).padStart(2, '0')}</span>
+                <h3 class="font-semibold text-gray-900">{name}</h3>
+              </div>
+              <p class="mt-1.5 text-sm leading-relaxed text-gray-600">{fields}</p>
+            </div>
           </div>
         ))}
       </div>
-      <p class="mt-6 text-sm text-gray-500">
+      <p class="mt-8 text-center text-sm text-gray-500">
         Printers and displays are collected within <strong>Peripherals</strong>; configuration profiles within
         <strong>Management</strong> — keeping the module set focused and dependency-free.
       </p>
@@ -92,38 +57,28 @@ const apiGroups = [
   </section>
 
   <!-- Real-time / event-driven -->
-  <section class="border-y border-gray-100 bg-gray-50 py-20">
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="grid gap-12 lg:grid-cols-2">
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900">Real-time &amp; event-driven</h2>
-          <p class="mt-4 text-gray-600">
-            Every client check-in is an event. The API ingests it, writes the module documents to PostgreSQL, and
-            pushes an update to connected dashboards over SignalR/WebSocket — so the fleet view reflects reality as
-            devices report in, without polling.
-          </p>
-          <ul class="mt-6 space-y-3 text-gray-600">
-            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span>Scheduled collection: launchd on macOS, service + scheduled task on Windows</span></li>
-            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span>Signed event payloads over HTTPS, authenticated per client</span></li>
-            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span>Raw payloads retained and retrievable per event for audit and debugging</span></li>
-          </ul>
-        </div>
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900">Fleet dashboard</h2>
-          <p class="mt-4 text-gray-600">
-            A single pane of glass: device counts, OS distribution, check-in status, security posture, application
-            inventory, and managed-install health. Drill into any device for all ten modules. The front end is a
-            pure reader — it never processes or invents data.
-          </p>
-          <div class="mt-6">
-            <a href="https://demo.reportmate.app" class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-700">
-              Open the live demo
-            </a>
-          </div>
+  <FeatureBlock badge="Real-time & event-driven" title="The fleet view updates as devices report in" reverse={true}>
+    <p>
+      Every client check-in is an event. The API ingests it, writes the module documents to PostgreSQL, and pushes
+      an update to connected dashboards over SignalR/WebSocket — so what you see reflects reality without polling.
+    </p>
+    <ul class="space-y-3 text-base">
+      <li class="flex items-start gap-3"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span><span>Scheduled collection: launchd on macOS, service + scheduled task on Windows</span></li>
+      <li class="flex items-start gap-3"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span><span>Signed event payloads over HTTPS, authenticated per client</span></li>
+      <li class="flex items-start gap-3"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span><span>Raw payloads retained and retrievable per event for audit and debugging</span></li>
+    </ul>
+    <div slot="visual" class="rounded-2xl border border-brand-800 bg-brand-900/60 p-6 font-mono text-sm shadow-2xl">
+      <div class="space-y-2 text-brand-100">
+        <div><span class="text-green-400">POST</span> /api/v1/events <span class="text-brand-300">→ 202 Accepted</span></div>
+        <div class="text-brand-300">device C02XL0ABJGH7 · 10 modules</div>
+        <div class="border-t border-brand-800 pt-2 text-brand-300">push → dashboard</div>
+        <div class="flex items-center gap-2">
+          <span class="h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
+          <span>fleet view updated · 0.4s</span>
         </div>
       </div>
     </div>
-  </section>
+  </FeatureBlock>
 
   <!-- REST API -->
   <section class="py-20">
@@ -136,7 +91,7 @@ const apiGroups = [
       </p>
       <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {apiGroups.map(({ tag, desc, sample }) => (
-          <div class="rounded-xl border border-gray-100 p-6">
+          <div class="rounded-2xl border border-gray-100 p-6 shadow-sm">
             <h3 class="font-semibold text-gray-900">{tag}</h3>
             <p class="mt-2 text-sm text-gray-600">{desc}</p>
             <code class="mt-4 block overflow-x-auto rounded-md bg-gray-900 px-3 py-2 text-xs text-brand-200">{sample}</code>
@@ -149,20 +104,20 @@ const apiGroups = [
     </div>
   </section>
 
-  <!-- Architecture -->
+  <!-- Architecture detail -->
   <section class="border-t border-gray-100 bg-gray-50 py-20">
     <div class="mx-auto max-w-6xl px-6">
       <h2 class="text-2xl font-bold text-gray-900">Architecture</h2>
       <div class="mt-8 grid gap-8 md:grid-cols-2">
-        <div class="rounded-xl border border-gray-200 bg-white p-8">
+        <div class="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
           <h3 class="text-lg font-semibold text-gray-900">Client agents</h3>
           <ul class="mt-4 space-y-3 text-gray-600">
             <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span><strong>macOS:</strong> native Swift binary, launchd-scheduled, osquery + system APIs, signed &amp; notarized</span></li>
             <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span><strong>Windows:</strong> C#/.NET binary, Windows service + scheduled task, osquery integration, signed</span></li>
-            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span>All collection and processing on-device — the payload arrives ready to store</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span>No Python on the endpoint — collection is a single compiled binary</span></li>
           </ul>
         </div>
-        <div class="rounded-xl border border-gray-200 bg-white p-8">
+        <div class="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
           <h3 class="text-lg font-semibold text-gray-900">Server stack</h3>
           <ul class="mt-4 space-y-3 text-gray-600">
             <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span><strong>API:</strong> FastAPI with versioned REST endpoints and OpenAPI docs</span></li>
@@ -172,6 +127,9 @@ const apiGroups = [
           </ul>
         </div>
       </div>
+      <p class="mt-6 text-sm text-gray-500">
+        See how the layers connect on the <a href="/#architecture" class="font-medium text-brand-600 hover:text-brand-700">architecture diagram</a>.
+      </p>
     </div>
   </section>
 
@@ -180,17 +138,17 @@ const apiGroups = [
     <div class="mx-auto max-w-6xl px-6">
       <h2 class="text-2xl font-bold text-gray-900">On the roadmap</h2>
       <div class="mt-8 grid gap-6 md:grid-cols-3">
-        <div class="rounded-xl border border-dashed border-gray-300 p-6">
+        <div class="rounded-2xl border border-dashed border-gray-300 p-6">
           <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">Coming soon</div>
           <h3 class="mt-2 font-semibold text-gray-900">Native dashboard apps</h3>
           <p class="mt-2 text-sm text-gray-600">First-party Mac and Windows apps for browsing your fleet natively, built on the same REST API.</p>
         </div>
-        <div class="rounded-xl border border-dashed border-gray-300 p-6">
+        <div class="rounded-2xl border border-dashed border-gray-300 p-6">
           <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">Coming soon</div>
           <h3 class="mt-2 font-semibold text-gray-900">Self-service cloud portal</h3>
           <p class="mt-2 text-sm text-gray-600">Sign up, provision a managed tenant, and manage billing without leaving the browser.</p>
         </div>
-        <div class="rounded-xl border border-dashed border-gray-300 p-6">
+        <div class="rounded-2xl border border-dashed border-gray-300 p-6">
           <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">Exploring</div>
           <h3 class="mt-2 font-semibold text-gray-900">More integrations</h3>
           <p class="mt-2 text-sm text-gray-600">Webhooks and turnkey connectors for CMDB, SIEM, and asset systems on top of the existing API.</p>

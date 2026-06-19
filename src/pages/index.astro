@@ -1,53 +1,82 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Mermaid from '../components/Mermaid.astro';
+import FeatureBlock from '../components/FeatureBlock.astro';
+import { modules } from '../data/modules.js';
 
-const modules = [
-  { name: 'Hardware', desc: 'Model, CPU/SoC, performance & efficiency cores, NPU, GPU, RAM (per-module manufacturer), storage, battery health, thermals.' },
-  { name: 'System', desc: 'OS build, patch level, uptime, boot time, locale, kernel, rapid security responses, time zone.' },
-  { name: 'Network', desc: 'Interfaces, IPv4/IPv6, MAC, DNS, gateways, Wi-Fi SSID/band/channel/width, VPN, active connection.' },
-  { name: 'Security', desc: 'FileVault / BitLocker, firewall, SIP, Gatekeeper, secure boot, TPM, XProtect, EDR presence.' },
-  { name: 'Applications', desc: 'Installed apps, versions, bundle IDs, publishers, install dates — across Mac and Windows.' },
-  { name: 'Installs', desc: 'Managed software state from Cimian and Munki: pending, installed, failed, with per-item versions.' },
-  { name: 'Inventory', desc: 'Asset tag, owner, department, location, device name, manufacturer, purchase metadata.' },
-  { name: 'Management', desc: 'MDM enrollment, configuration profiles, certificates, supervision, managed status.' },
-  { name: 'Identity', desc: 'Logged-in user, local & directory accounts, home directory, Entra/AD join, shared-device state.' },
-  { name: 'Peripherals', desc: 'Displays, printers, USB and Bluetooth devices — resolution, drivers, connection type.' },
-];
-
-const archDiagram = `flowchart TB
-  subgraph EP["macOS &amp; Windows endpoints — collection AND processing run here"]
-    direction LR
-    MAC["macOS client<br/><small>native Swift + osquery</small>"]
-    WIN["Windows client<br/><small>C# / .NET + osquery</small>"]
-  end
-  PROC["10 modules built into one signed payload, on-device<br/><small>hardware · system · network · security · applications<br/>installs · inventory · management · identity · peripherals</small>"]
-  MAC --> PROC
-  WIN --> PROC
-  PROC -->|"HTTPS · signed event JSON<br/>X-Client-Passphrase"| API
-
-  subgraph CLOUD["Your cloud — provisioned by Terraform (Azure or AWS), or self-hosted"]
+const archDiagram = `flowchart LR
+  subgraph EP["ENDPOINTS — collect &amp; process locally"]
     direction TB
-    API["FastAPI ingest + REST API<br/><small>40+ versioned endpoints · OpenAPI</small>"]
-    DB[("PostgreSQL<br/><small>JSONB — one document per module</small>")]
-    RT(["SignalR / WebSocket<br/><small>real-time push</small>"])
+    MAC["macOS client<br/><small>native Swift</small>"]
+    WIN["Windows client<br/><small>C# / .NET</small>"]
+    OSQ(["osquery + native system APIs"])
+    SCH[/"launchd · service + scheduled task"/]
+    MAC --- OSQ
+    WIN --- OSQ
+    SCH -.schedules.-> MAC
+    SCH -.schedules.-> WIN
+  end
+
+  PAY{{"signed payload<br/>10 module documents"}}
+  MAC --> PAY
+  WIN --> PAY
+
+  subgraph CLOUD["YOUR CLOUD — Terraform: Azure or AWS"]
+    direction TB
+    API["FastAPI<br/>ingest + REST /api/v1"]
+    DB[("PostgreSQL<br/>JSONB per module")]
+    RT(["SignalR / WebSocket"])
     API --> DB
     API --> RT
   end
+  PAY ==>|"HTTPS · X-Client-Passphrase"| API
 
-  subgraph READ["Read &amp; integrate"]
-    direction LR
+  subgraph READ["READ &amp; INTEGRATE"]
+    direction TB
     WEB["Next.js dashboard<br/><small>live fleet view</small>"]
-    APPS["Native Mac &amp; Windows<br/>dashboard apps<br/><small>coming soon</small>"]
-    INT["Your tools<br/><small>via REST API</small>"]
+    APPS["Native Mac &amp; Windows apps<br/><small>coming soon</small>"]
+    INT["Your CMDB · SIEM · automation"]
   end
   DB --> WEB
-  RT --> WEB
+  RT ==> WEB
   API --> INT
   DB -.-> APPS
 
-  classDef edge fill:#e0effe,stroke:#0074c7,stroke-width:1px,color:#0b426e;
-  class MAC,WIN edge;`;
+  classDef ep fill:#eff6ff,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
+  classDef pay fill:#0074c7,stroke:#015da1,stroke-width:2px,color:#ffffff;
+  classDef cloud fill:#ecfdf5,stroke:#059669,stroke-width:2px,color:#065f46;
+  classDef read fill:#fff7ed,stroke:#ea580c,stroke-width:2px,color:#9a3412;
+  class MAC,WIN,OSQ,SCH ep;
+  class PAY pay;
+  class API,DB,RT cloud;
+  class WEB,APPS,INT read;
+
+  style EP fill:#f8fafc,stroke:#cbd5e1,color:#334155;
+  style CLOUD fill:#f8fafc,stroke:#cbd5e1,color:#334155;
+  style READ fill:#f8fafc,stroke:#cbd5e1,color:#334155;`;
+
+const curlExample = `$ curl https://api.reportmate.app/api/v1/devices \\
+    -H "X-Client-Passphrase: $RM_KEY"
+
+{
+  "devices": [
+    {
+      "serialNumber": "C02XL0ABJGH7",
+      "deviceId": "9f2a1c7e-4b30-4d2a-bf1e-7c0a2d51e8a4",
+      "name": "design-studio-04",
+      "platform": "Macintosh",
+      "osName": "macOS",
+      "osVersion": "15.5",
+      "assetTag": "ECU-04821",
+      "department": "Design",
+      "status": "active",
+      "lastSeen": "2026-06-18T17:42:11Z",
+      "totalEvents": 1284
+    }
+  ],
+  "total": 327,
+  "hasMore": false
+}`;
 ---
 
 <Layout title="ReportMate — Open-Source Endpoint Intelligence for Mac & Windows">
@@ -69,16 +98,10 @@ const archDiagram = `flowchart TB
         agents phoning home to a vendor.
       </p>
       <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
-        <a
-          href="https://demo.reportmate.app"
-          class="rounded-lg bg-brand-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-brand-700"
-        >
+        <a href="https://demo.reportmate.app" class="rounded-lg bg-brand-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-brand-700">
           Explore the Live Demo
         </a>
-        <a
-          href="https://github.com/reportmate"
-          class="rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-        >
+        <a href="https://github.com/reportmate" class="rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
           View on GitHub
         </a>
       </div>
@@ -105,81 +128,32 @@ const archDiagram = `flowchart TB
     </div>
   </section>
 
-  <!-- How it works -->
+  <!-- Ten reports (moved above the diagram, upgraded) -->
   <section class="py-24">
     <div class="mx-auto max-w-6xl px-6">
-      <div class="text-center">
-        <h2 class="text-3xl font-bold text-gray-900">Processing happens on the device, not in the cloud</h2>
-        <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-          Most platforms ship raw telemetry to a server and bill you to crunch it. ReportMate flips that:
-          the native client builds a clean, structured report locally. The backend just stores and serves it,
-          so it scales to thousands of devices without a heavy processing tier.
+      <div class="mx-auto max-w-3xl text-center">
+        <div class="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
+          Unified telemetry
+        </div>
+        <h2 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          Ten reports on every device.<br class="hidden sm:block" /> The same on Mac and Windows.
+        </h2>
+        <p class="mt-5 text-lg text-gray-600">
+          Every check-in refreshes ten module reports, built and normalized on the endpoint to one shared schema.
+          Not two tools bolted together — one genuinely unified fleet view.
         </p>
       </div>
 
-      <div class="mt-16 grid gap-8 md:grid-cols-3">
-        <div class="rounded-xl border border-gray-100 p-8">
-          <div class="text-sm font-semibold text-brand-600">Step 1</div>
-          <h3 class="mt-2 text-lg font-semibold text-gray-900">Collect &amp; process on-device</h3>
-          <p class="mt-2 text-gray-600">
-            Native Swift (macOS) and C#/.NET (Windows) binaries use osquery and platform APIs to gather hardware,
-            security, network, and software facts, then normalize them into ten module documents — right on the endpoint.
-          </p>
-        </div>
-        <div class="rounded-xl border border-gray-100 p-8">
-          <div class="text-sm font-semibold text-brand-600">Step 2</div>
-          <h3 class="mt-2 text-lg font-semibold text-gray-900">Transmit signed events</h3>
-          <p class="mt-2 text-gray-600">
-            Each run posts a signed event payload over HTTPS to the FastAPI ingest endpoint, authenticated with a
-            client passphrase. Scheduled by launchd on Mac and a service/scheduled task on Windows.
-          </p>
-        </div>
-        <div class="rounded-xl border border-gray-100 p-8">
-          <div class="text-sm font-semibold text-brand-600">Step 3</div>
-          <h3 class="mt-2 text-lg font-semibold text-gray-900">Read in real time</h3>
-          <p class="mt-2 text-gray-600">
-            Events land in PostgreSQL as JSONB and push to the dashboard over WebSocket. The Next.js front end is a
-            pure reader — and everything it shows is available through the REST API for your own tools.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Architecture diagram -->
-  <section class="bg-gray-50 py-24">
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="text-center">
-        <h2 class="text-3xl font-bold text-gray-900">One pipeline, end to end</h2>
-        <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-          Native binaries, an event-driven API, a JSONB store, a real-time dashboard, and Terraform to stand it
-          all up in your own cloud. Nothing is a black box.
-        </p>
-      </div>
-      <div class="mt-12">
-        <Mermaid
-          code={archDiagram}
-          caption="Collection and processing run on the endpoint; storage, real-time push, and reading run in infrastructure you own."
-        />
-      </div>
-    </div>
-  </section>
-
-  <!-- Core reports / modules -->
-  <section class="py-24">
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="text-center">
-        <h2 class="text-3xl font-bold text-gray-900">Ten reports on every device</h2>
-        <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-          Every check-in refreshes ten module reports. The same schema on Mac and Windows, so your fleet view is
-          genuinely unified — not two tools bolted together.
-        </p>
-      </div>
-      <div class="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {modules.map(({ name, desc }) => (
-          <div class="rounded-xl border border-gray-100 p-6 transition hover:border-brand-200 hover:shadow-sm">
-            <h3 class="font-semibold text-gray-900">{name}</h3>
-            <p class="mt-2 text-sm text-gray-600">{desc}</p>
+      <div class="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {modules.map(({ name, short, accent, icon }) => (
+          <div class="group rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg">
+            <div class:list={['flex h-11 w-11 items-center justify-center rounded-xl', accent]}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d={icon} />
+              </svg>
+            </div>
+            <h3 class="mt-4 font-semibold text-gray-900">{name}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-gray-600">{short}</p>
           </div>
         ))}
       </div>
@@ -191,91 +165,214 @@ const archDiagram = `flowchart TB
     </div>
   </section>
 
-  <!-- REST API + event-driven -->
-  <section class="bg-brand-950 py-24 text-white">
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="grid items-center gap-12 lg:grid-cols-2">
-        <div>
-          <div class="inline-flex items-center rounded-full border border-brand-700 bg-brand-900 px-3 py-1 text-xs font-medium text-brand-200">
-            Event-driven &amp; API-first
+  <!-- How it works (dark feature block) -->
+  <FeatureBlock badge="On-device processing" title="The work happens on the device, not in the cloud">
+    <p>
+      Most platforms ship raw telemetry to a server and bill you to crunch it. ReportMate flips that: the native
+      client builds a clean, structured report locally. The backend just stores and serves it — so it scales to
+      thousands of devices without a heavy processing tier.
+    </p>
+    <ul class="space-y-3 text-base">
+      <li class="flex items-start gap-3">
+        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
+        <span>Native Swift (macOS) and C#/.NET (Windows) binaries, signed and scheduled by the OS</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
+        <span>osquery and platform APIs normalized into ten module documents on the endpoint</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
+        <span>A signed event payload posts over HTTPS — the dashboard reflects it the moment it lands</span>
+      </li>
+    </ul>
+    <div slot="visual" class="rounded-2xl border border-brand-800 bg-brand-900/50 p-6 shadow-2xl">
+      <ol class="space-y-4">
+        <li class="flex gap-4">
+          <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">1</span>
+          <div>
+            <div class="font-semibold text-white">Collect &amp; process</div>
+            <div class="text-sm text-brand-200">Hardware, security, network, software — gathered and normalized locally.</div>
           </div>
-          <h2 class="mt-4 text-3xl font-bold">If the dashboard can show it, your code can fetch it</h2>
-          <p class="mt-4 text-lg text-brand-100">
-            ReportMate is built API-first on FastAPI with a full OpenAPI specification. Devices ingest through the
-            same documented event API the dashboard reads from. Query a single device, pull bulk fleet analytics,
-            stream events, or wire ReportMate into your CMDB, SIEM, or automation.
-          </p>
-          <ul class="mt-6 space-y-3 text-brand-100">
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
-              <span>40+ versioned <code class="rounded bg-brand-900 px-1.5 py-0.5 text-sm">/api/v1</code> endpoints with interactive OpenAPI docs</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
-              <span>Per-device and bulk fleet queries: hardware, applications, installs, identity, inventory</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
-              <span>Real-time event ingestion and a SignalR/WebSocket negotiate endpoint for live updates</span>
-            </li>
-          </ul>
-          <div class="mt-8">
-            <a href="/docs" class="rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-brand-900 hover:bg-gray-100">
-              Browse the API reference
-            </a>
+        </li>
+        <li class="flex gap-4">
+          <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">2</span>
+          <div>
+            <div class="font-semibold text-white">Transmit a signed event</div>
+            <div class="text-sm text-brand-200">One payload over HTTPS, passphrase-authenticated, on a schedule.</div>
           </div>
-        </div>
-        <div class="rounded-2xl border border-brand-800 bg-brand-900/60 p-6 font-mono text-sm shadow-2xl">
-          <div class="mb-3 flex gap-1.5">
-            <span class="h-3 w-3 rounded-full bg-red-400"></span>
-            <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
-            <span class="h-3 w-3 rounded-full bg-green-400"></span>
+        </li>
+        <li class="flex gap-4">
+          <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">3</span>
+          <div>
+            <div class="font-semibold text-white">Read in real time</div>
+            <div class="text-sm text-brand-200">Stored as JSONB, pushed to the dashboard over WebSocket, exposed via the API.</div>
           </div>
-          <pre class="overflow-x-auto text-brand-100"><code>$ curl https://api.reportmate.app/api/v1/devices \
-    -H "X-Client-Passphrase: $RM_KEY"
+        </li>
+      </ol>
+    </div>
+  </FeatureBlock>
 
-&#123;
-  "devices": [
-    &#123;
-      "serialNumber": "C02XL0ABJGH7",
-      "name": "design-studio-04",
-      "platform": "macOS 15.5",
-      "lastSeen": "2026-06-18T17:42:11Z",
-      "modules": 10
-    &#125;
-  ]
-&#125;</code></pre>
+  <!-- Architecture diagram -->
+  <section id="architecture" class="scroll-mt-20 bg-gray-50 py-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-3xl text-center">
+        <div class="inline-flex items-center rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-brand-700">
+          End-to-end architecture
+        </div>
+        <h2 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">One pipeline, nothing hidden</h2>
+        <p class="mt-5 text-lg text-gray-600">
+          Native binaries, an event-driven API, a JSONB store, real-time push, and Terraform to stand it all up in
+          your own cloud. Every layer is yours to read, audit, and extend.
+        </p>
+      </div>
+
+      <!-- Five-stage pipeline stepper -->
+      <ol class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {[
+          { n: '1', verb: 'Collect', where: 'on the device', desc: 'osquery + native OS tooling' },
+          { n: '2', verb: 'Transmit', where: 'on the device', desc: 'signed event over HTTPS' },
+          { n: '3', verb: 'Ingest', where: 'in your cloud', desc: 'FastAPI /api/v1/events' },
+          { n: '4', verb: 'Store', where: 'in your cloud', desc: 'PostgreSQL, JSONB per module' },
+          { n: '5', verb: 'Read', where: 'in your cloud', desc: 'dashboard · API · real-time' },
+        ].map(({ n, verb, where, desc }) => (
+          <li class="relative rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center gap-2">
+              <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">{n}</span>
+              <span class="font-semibold text-gray-900">{verb}</span>
+            </div>
+            <div class:list={[
+              'mt-3 inline-block rounded-full px-2 py-0.5 text-xs font-medium',
+              where === 'on the device' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700',
+            ]}>{where}</div>
+            <p class="mt-2 text-sm text-gray-600">{desc}</p>
+          </li>
+        ))}
+      </ol>
+
+      <div class="mt-12">
+        <Mermaid
+          code={archDiagram}
+          caption="Collection and processing run on the endpoint; storage, real-time push, and reading run in infrastructure you own."
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Right tool at every layer (engineering principle) -->
+  <section class="py-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-3xl text-center">
+        <div class="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
+          Engineering principle
+        </div>
+        <h2 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">The right tool at every layer</h2>
+        <p class="mt-5 text-lg text-gray-600">
+          A deliberate split: compiled native binaries where reliability is everything, Python where iteration speed
+          is. The interpreter never touches the endpoint.
+        </p>
+      </div>
+
+      <div class="mt-16 grid gap-8 md:grid-cols-2">
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/40 p-8">
+          <div class="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+            On the device
+          </div>
+          <h3 class="mt-4 text-xl font-semibold text-gray-900">Native compiled binaries — no Python</h3>
+          <p class="mt-3 text-gray-600">
+            Collection is Swift on macOS and C#/.NET on Windows, driven by osquery and native OS tooling. There is no
+            Python runtime to install, pin, or repair across thousands of endpoints — a signed, compiled binary just
+            runs. Local collection has to be bulletproof, so we keep an interpreter out of that path entirely.
+          </p>
+          <ul class="mt-5 space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></span><span>Swift (macOS) and C#/.NET (Windows), signed and notarized</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></span><span>osquery + native APIs, with bash/jq fallbacks — never Python</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></span><span>Nothing to maintain on the endpoint but a single binary</span></li>
+          </ul>
+        </div>
+
+        <div class="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-8">
+          <div class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+            In your cloud
+          </div>
+          <h3 class="mt-4 text-xl font-semibold text-gray-900">Python &amp; FastAPI — where it shines</h3>
+          <p class="mt-3 text-gray-600">
+            The API layer is where Python earns its place: FastAPI gives us a typed, OpenAPI-documented event API
+            that's fast to extend and a pleasure to integrate against. The trade-off is intentional — rich
+            dependencies live in the cloud you control and upgrade on your schedule, never on the endpoint.
+          </p>
+          <ul class="mt-5 space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500"></span><span>FastAPI with a full OpenAPI spec and interactive docs</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500"></span><span>Runs in a container, provisioned by Terraform on Azure or AWS</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500"></span><span>Upgraded centrally — endpoints are unaffected</span></li>
+          </ul>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- REST API (dark feature block — the loved template) -->
+  <FeatureBlock badge="Event-driven & API-first" title="If the dashboard can show it, your code can fetch it">
+    <p>
+      ReportMate is built API-first on FastAPI with a full OpenAPI specification. Devices ingest through the same
+      documented event API the dashboard reads from. Query a single device, pull bulk fleet analytics, stream
+      events, or wire ReportMate into your CMDB, SIEM, or automation.
+    </p>
+    <ul class="space-y-3 text-base">
+      <li class="flex items-start gap-3">
+        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
+        <span>40+ versioned <code class="rounded bg-brand-900 px-1.5 py-0.5 text-sm">/api/v1</code> endpoints with interactive OpenAPI docs</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
+        <span>Per-device and bulk fleet queries: hardware, applications, installs, identity, inventory</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
+        <span>Real-time event ingestion and a SignalR/WebSocket negotiate endpoint for live updates</span>
+      </li>
+    </ul>
+    <div class="pt-2">
+      <a href="/docs" class="inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-brand-900 hover:bg-gray-100">
+        Browse the API reference
+      </a>
+    </div>
+    <div slot="visual" class="rounded-2xl border border-brand-800 bg-brand-900/60 p-6 font-mono text-sm shadow-2xl">
+      <div class="mb-3 flex gap-1.5">
+        <span class="h-3 w-3 rounded-full bg-red-400"></span>
+        <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
+        <span class="h-3 w-3 rounded-full bg-green-400"></span>
+      </div>
+      <pre class="overflow-x-auto text-brand-100"><code>{curlExample}</code></pre>
+    </div>
+  </FeatureBlock>
+
   <!-- Why ReportMate -->
   <section class="py-24">
     <div class="mx-auto max-w-6xl px-6">
       <div class="text-center">
-        <h2 class="text-3xl font-bold text-gray-900">Built for teams that want control</h2>
+        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Built for teams that want control</h2>
       </div>
       <div class="mt-16 grid gap-8 md:grid-cols-3">
-        <div class="rounded-xl border border-gray-100 p-8">
+        <div class="rounded-2xl border border-gray-100 p-8 shadow-sm">
           <h3 class="text-lg font-semibold text-gray-900">Truly cross-platform</h3>
           <p class="mt-2 text-gray-600">
             One schema, one dashboard, one API for Mac and Windows. No reconciling two products with different data
             models and different bills.
           </p>
         </div>
-        <div class="rounded-xl border border-gray-100 p-8">
+        <div class="rounded-2xl border border-gray-100 p-8 shadow-sm">
           <h3 class="text-lg font-semibold text-gray-900">Your data, your cloud</h3>
           <p class="mt-2 text-gray-600">
             Self-host or deploy to your own Azure/AWS tenant with the included Terraform. Telemetry never transits a
             vendor's servers. Encrypted in transit, passphrase-authenticated.
           </p>
         </div>
-        <div class="rounded-xl border border-gray-100 p-8">
+        <div class="rounded-2xl border border-gray-100 p-8 shadow-sm">
           <h3 class="text-lg font-semibold text-gray-900">Open source, no lock-in</h3>
           <p class="mt-2 text-gray-600">
-            Source-available under BSL 1.1. Read the code, audit the collection, extend a module, or fork it.
-            Your data lives in plain PostgreSQL you can query directly.
+            Source-available under BSL 1.1. Read the code, audit the collection, extend a module, or fork it. Your
+            data lives in plain PostgreSQL you can query directly.
           </p>
         </div>
       </div>
@@ -290,16 +387,10 @@ const archDiagram = `flowchart TB
         Click around the live demo, or deploy your own in an afternoon. Self-host for free, or let us run it.
       </p>
       <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <a
-          href="https://demo.reportmate.app"
-          class="rounded-lg bg-brand-600 px-6 py-3 text-sm font-medium text-white hover:bg-brand-700"
-        >
+        <a href="https://demo.reportmate.app" class="rounded-lg bg-brand-600 px-6 py-3 text-sm font-medium text-white hover:bg-brand-700">
           Explore the Live Demo
         </a>
-        <a
-          href="/pricing"
-          class="rounded-lg border border-gray-600 px-6 py-3 text-sm font-medium text-white hover:bg-gray-800"
-        >
+        <a href="/pricing" class="rounded-lg border border-gray-600 px-6 py-3 text-sm font-medium text-white hover:bg-gray-800">
           See Pricing
         </a>
       </div>
