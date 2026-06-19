@@ -2,11 +2,13 @@
 interface Props {
   title: string;
   description?: string;
+  hideFooter?: boolean;
 }
 
 const {
   title,
   description = 'Open-source, cross-platform endpoint intelligence for Macintosh and Windows fleets. Native on-device collection, a real-time dashboard, and a full REST API. Self-host free or run it managed.',
+  hideFooter = false,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -66,13 +68,15 @@ const leftNav = [
               <span class="text-[11px] font-medium text-gray-500">Endpoint Monitoring</span>
             </span>
           </a>
-          <div class="hidden items-center gap-6 md:flex">
+          <div class="hidden items-center gap-7 md:flex">
             {leftNav.map(({ href, label }) => (
               <a
                 href={href}
                 class:list={[
-                  'text-sm font-medium transition',
-                  path === href ? 'text-brand-700' : 'text-gray-600 hover:text-gray-900',
+                  'relative text-sm font-semibold transition-colors after:absolute after:inset-x-0 after:-bottom-2 after:h-0.5 after:rounded-full after:bg-brand-600 after:transition-transform after:duration-200 after:content-[""]',
+                  path === href
+                    ? 'text-brand-700 after:scale-x-100'
+                    : 'text-gray-600 after:scale-x-0 hover:text-gray-900 hover:after:scale-x-100',
                 ]}
               >
                 {label}
@@ -117,6 +121,7 @@ const leftNav = [
       <slot />
     </main>
 
+    {!hideFooter && (
     <footer class="border-t border-gray-100 bg-gray-50">
       <div class="mx-auto max-w-6xl px-6 py-12">
         <div class="grid gap-8 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
@@ -164,6 +169,7 @@ const leftNav = [
         </div>
       </div>
     </footer>
+    )}
 
     <!-- Lightbox for product screenshots -->
     <div id="lightbox" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/85 p-4 backdrop-blur-sm">
