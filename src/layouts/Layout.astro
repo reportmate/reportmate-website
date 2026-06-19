@@ -66,18 +66,15 @@ const leftNav = [
               <span class="text-[11px] font-medium text-gray-500">Endpoint Monitoring</span>
             </span>
           </a>
-          <div class="hidden items-center gap-1.5 md:flex">
-            {leftNav.map(({ href, label, icon }) => (
+          <div class="hidden items-center gap-6 md:flex">
+            {leftNav.map(({ href, label }) => (
               <a
                 href={href}
                 class:list={[
-                  'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium shadow-sm transition',
-                  path === href
-                    ? 'border-brand-200 bg-brand-50 text-brand-700'
-                    : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900',
+                  'text-sm font-medium transition',
+                  path === href ? 'text-brand-700' : 'text-gray-600 hover:text-gray-900',
                 ]}
               >
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d={icon} /></svg>
                 {label}
               </a>
             ))}
