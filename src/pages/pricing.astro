@@ -64,7 +64,7 @@ const enterpriseServices = [
   },
   {
     title: 'Dedicated support & response-time guarantee',
-    desc: 'A private Slack channel with a named engineer and a guaranteed response time, written into your contract — a service-level agreement (SLA) — whether we host your instance or you do.',
+    desc: 'A private Slack channel with a named engineer and a guaranteed response time, written into your contract — a <strong>service-level agreement</strong> (SLA) — whether we host your instance or you do.',
   },
 ];
 
@@ -206,7 +206,7 @@ const faqs = [
               {enterpriseServices.map((service) => (
                 <div class="rounded-xl border border-brand-100 bg-white/70 p-4">
                   <h4 class="text-sm font-semibold text-gray-900">{service.title}</h4>
-                  <p class="mt-1 text-sm text-gray-600">{service.desc}</p>
+                  <p class="mt-1 text-sm text-gray-600" set:html={service.desc}></p>
                 </div>
               ))}
             </div>
