@@ -13,6 +13,7 @@ const selfServeTiers = [
     price: 'Free',
     period: 'forever',
     tagline: "It's yours. Run it.",
+    bestFor: 'Teams with the skills and time to run it themselves.',
     description: 'Run the whole platform on your own infrastructure, on unlimited endpoints, at no license cost.',
     features: [
       'Unlimited endpoints',
@@ -34,6 +35,7 @@ const selfServeTiers = [
     period: '/month',
     annualNote: 'or $9,990/year — 2 months free',
     tagline: 'We run it for you.',
+    bestFor: "Teams who can deploy to their fleet but don't want to run servers.",
     description: "We host, upgrade, secure, and back it up. You just read the dashboard.",
     features: [
       'Unlimited endpoints',
@@ -148,6 +150,13 @@ const faqs = [
             {tier.annualNote && <p class="mt-1 text-xs font-medium text-brand-600">{tier.annualNote}</p>}
             <p class="mt-3 text-sm text-gray-600">{tier.description}</p>
 
+            {tier.bestFor && (
+              <div class="mt-4 border-t border-gray-100 pt-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Best for</p>
+                <p class="mt-1 text-sm text-gray-600">{tier.bestFor}</p>
+              </div>
+            )}
+
             <ul class="mt-8 flex-1 space-y-3">
               {tier.features.map((feature) => (
                 <li class="flex items-start gap-2 text-sm text-gray-600">
@@ -184,11 +193,14 @@ const faqs = [
             <span class="text-4xl font-bold text-gray-900">Custom</span>
           </div>
           <p class="mt-3 max-w-xl text-sm text-gray-600">
-            For institutions where downtime is unacceptable and someone needs to own the rollout. We stand
-            ReportMate up, deploy the client across your whole fleet, and stand behind it with a response-time
-            guarantee — managed by us
-            or on your own infrastructure.
+            We stand ReportMate up, deploy the client across your whole fleet, and stand behind it with a
+            response-time guarantee — managed by us or on your own infrastructure.
           </p>
+
+          <div class="mt-4 border-t border-brand-100 pt-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Best for</p>
+            <p class="mt-1 max-w-xl text-sm text-gray-600">Institutions that want the rollout done for them — and a guarantee.</p>
+          </div>
 
           <div class="mt-8 grid flex-1 gap-8 sm:grid-cols-2">
             <ul class="space-y-3">
