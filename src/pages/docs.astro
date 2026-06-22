@@ -20,7 +20,41 @@ import Layout from '../layouts/Layout.astro';
       --color-link: #0074c7;
       --color-link-dark: #015da1;
     }
+    /* Belt-and-suspenders: keep the embed light even if Stoplight resolves a dark theme. */
+    .sl-elements[data-theme='dark'],
+    elements-api[data-theme='dark'],
+    [data-theme='dark'] .sl-elements {
+      color-scheme: light;
+    }
   </style>
+
+  <!--
+    Stoplight Elements auto-detects the OS theme via matchMedia('(prefers-color-scheme: dark)')
+    and renders an unreadable dark sidebar/panels that clash with the rest of the site, which is
+    light-only by design. Force that one query to report light before the web component upgrades,
+    so the docs always render in the light theme. All other media queries pass through untouched.
+  -->
+  <script is:inline>
+    (function () {
+      var original = window.matchMedia ? window.matchMedia.bind(window) : null;
+      if (!original) return;
+      window.matchMedia = function (query) {
+        if (typeof query === 'string' && query.indexOf('prefers-color-scheme') !== -1) {
+          return {
+            matches: false,
+            media: query,
+            onchange: null,
+            addListener: function () {},
+            removeListener: function () {},
+            addEventListener: function () {},
+            removeEventListener: function () {},
+            dispatchEvent: function () { return false; },
+          };
+        }
+        return original(query);
+      };
+    })();
+  </script>
 
   <div class="h-[calc(100vh-4rem)]">
     <elements-api
