@@ -3,14 +3,18 @@ import Layout from '../layouts/Layout.astro';
 
 // The full platform ships in every tier — no feature paywalls. Plans differ
 // only by who runs it, how it scales, and the level of support behind it.
-const includedEverywhere = 'The complete platform — every data module, full REST API and webhooks, SSO / SAML, real-time dashboard. No feature paywalls.';
+const includedEverywhere = 'The complete platform — every data module, full REST API and webhooks, SSO / SAML, real-time dashboard — ships in every plan.';
 
-const tiers = [
+// Two self-serve tiers render as narrow 25%-width cards. Enterprise is a
+// bespoke 50%-width slab below, where the white-glove services live.
+const selfServeTiers = [
   {
-    name: 'Self-Hosted',
+    name: 'Open Source',
     price: 'Free',
     period: 'forever',
-    description: 'Run the whole platform on your own infrastructure.',
+    tagline: "It's yours. Run it.",
+    bestFor: 'Teams with the skills and time to run it themselves.',
+    description: 'Run the whole platform on your own infrastructure, on unlimited endpoints, at no license cost.',
     features: [
       'Unlimited endpoints',
       'Every data module',
@@ -19,112 +23,92 @@ const tiers = [
       'Terraform modules (Azure + AWS)',
       'Real-time dashboard',
       'Community support (GitHub)',
-      'Source-available (BSL 1.1)',
+      'Open source (AGPL-3.0 + MIT)',
     ],
     cta: 'Get Started on GitHub',
     ctaLink: 'https://github.com/reportmate',
     highlighted: false,
   },
   {
-    name: 'Cloud Starter',
-    price: '$99',
-    period: '/month',
-    annualNote: 'or $990/year — 2 months free',
-    description: 'We host, upgrade, and back it up. You manage your fleet.',
-    features: [
-      'Up to 100 endpoints',
-      'Full platform — fully managed',
-      'Managed hosting & automatic upgrades',
-      'Daily backups + SSL included',
-      'Email support',
-    ],
-    cta: 'Join the Waitlist',
-    ctaLink: 'mailto:hello@reportmate.app?subject=ReportMate%20Cloud%20Starter%20waitlist',
-    highlighted: true,
-    badge: 'Early access',
-  },
-  {
     name: 'Cloud Pro',
-    price: '$499',
+    price: '$999',
     period: '/month',
-    annualNote: 'or $4,990/year — 2 months free',
-    description: 'Managed at scale, with isolation and priority support.',
+    annualNote: 'or $9,990/year — 2 months free',
+    tagline: 'We run it for you.',
+    bestFor: "Teams who can deploy to their fleet but don't want to run servers.",
+    description: "We host, upgrade, secure, and back it up. You just read the dashboard.",
     features: [
       'Unlimited endpoints',
-      'Everything in Starter',
+      'Full platform — fully managed',
+      'Managed hosting & automatic upgrades',
       'Single-tenant isolation',
+      'Daily backups + SSL',
       'Custom data retention',
-      'Uptime SLA',
-      'Priority support',
+      'Priority email support',
     ],
     cta: 'Join the Waitlist',
     ctaLink: 'mailto:hello@reportmate.app?subject=ReportMate%20Cloud%20Pro%20waitlist',
-    highlighted: false,
+    highlighted: true,
     badge: 'Early access',
-  },
-  {
-    name: 'Enterprise',
-    price: 'Custom',
-    period: '',
-    description: 'Dedicated or on-premise, with a white-glove support package built in.',
-    features: [
-      'Everything in Pro',
-      'Dedicated infrastructure or on-premise',
-      'Response-time SLA',
-      'Named phone + Slack support',
-      'Custom integrations',
-      'Onboarding & migration included',
-    ],
-    cta: 'Contact Sales',
-    ctaLink: 'mailto:hello@reportmate.app?subject=ReportMate%20Enterprise',
-    highlighted: false,
   },
 ];
 
-// Human services, sold as a package on top of any plan — including self-hosted.
-const services = [
+// Everything that used to live in the standalone "Services & support" band now
+// lives inside Enterprise — the white-glove tier is the home for done-for-you.
+const enterpriseServices = [
   {
-    title: 'Installation & configuration',
-    desc: 'We stand ReportMate up in your cloud or on-premise, wire in SSO, and tune collection to your fleet.',
+    title: 'Setup & configuration',
+    desc: 'We stand up your dedicated instance — on-premise or in your cloud — wire in SSO, and tune collection to your fleet.',
   },
   {
-    title: 'Guided migration',
-    desc: 'Move off MunkiReport, Sal, or spreadsheets without losing history — we map and import your existing data.',
+    title: 'Fleet rollout',
+    desc: 'We package the client for your MDM, push it to every Macintosh and Windows device, and confirm your whole fleet is reporting — then retire your old tool.',
   },
   {
-    title: 'Ongoing support & SLA',
-    desc: 'Named phone and Slack support with response-time guarantees, whether we host it or you do.',
+    title: 'Dedicated support & response-time guarantee',
+    desc: 'A private Slack channel with a named engineer and a guaranteed response time, written into your contract — a <strong>service-level agreement</strong> (SLA) — whether we host your instance or you do.',
   },
+];
+
+const enterpriseFeatures = [
+  'Everything in Cloud Pro',
+  'Dedicated infrastructure or on-premise',
+  'Hands-on setup & configuration',
+  'Full fleet rollout — client packaged & deployed to every device',
+  'Response-time guarantee (SLA)',
+  'Dedicated Slack channel + named engineer',
+  'Security & procurement review (vendor questionnaires, data processing agreement)',
+  'Custom integrations & onboarding training',
 ];
 
 const faqs = [
   {
-    q: 'Is the self-hosted version really free?',
-    a: 'Yes. The full platform — clients, API, dashboard, and Terraform — is source-available under BSL 1.1. Run it on unlimited endpoints in your own cloud at no license cost. The paid plans exist for teams who would rather we operate it for them.',
+    q: 'Is the Open Source version really free?',
+    a: 'Yes. The full platform is open source — the server (API and dashboard) under the GNU AGPL-3.0, and the clients and Terraform modules under MIT. Run it on unlimited endpoints in your own cloud at no license cost. The paid plans exist for teams who would rather we operate it for them.',
   },
   {
     q: 'Where does my fleet data live?',
-    a: 'On self-hosted and Enterprise, entirely in infrastructure you own — telemetry never transits our servers. On managed Cloud plans, in a tenant we operate on your behalf, with daily backups and SSL. Either way the data is plain PostgreSQL you can query and export.',
+    a: 'On Open Source and Enterprise, entirely in infrastructure you own — telemetry never transits our servers. On Cloud Pro, in a single-tenant instance we operate on your behalf, with daily backups and SSL. Either way the data is plain PostgreSQL you can query and export.',
   },
   {
-    q: 'What does BSL 1.1 mean for me?',
-    a: 'The Business Source License lets you read, run, audit, modify, and self-host ReportMate freely for your own fleet. The only restriction is offering ReportMate itself as a competing hosted service. Each release converts to a fully open license over time.',
+    q: 'What license is ReportMate under?',
+    a: "Open source. The server — the API and web dashboard — is licensed under the GNU AGPL-3.0; the Macintosh and Windows clients and the Terraform modules are MIT. You can read, run, audit, modify, and self-host the whole platform freely for your own fleet. A separate commercial license is available for organizations whose policies don't permit AGPL.",
   },
   {
-    q: 'Can I start self-hosted and move to managed later?',
-    a: 'Yes. Because both run the same code and the same PostgreSQL schema, migrating between self-hosted and managed Cloud is a data move, not a re-platform. Enterprise onboarding includes a guided migration.',
+    q: 'Can I start on Open Source and move to managed later?',
+    a: 'Yes. Because both run the same code and the same PostgreSQL schema, migrating between self-hosted and managed Cloud is a data move, not a re-platform. Enterprise onboarding includes a guided migration either direction.',
   },
   {
-    q: 'How does endpoint counting work?',
-    a: 'An endpoint is any Macintosh or Windows device reporting in. Self-hosted and Enterprise are unlimited. Cloud Starter is capped at 100 active devices; Cloud Pro is unlimited.',
+    q: 'What counts as an endpoint, and is Cloud Pro really unlimited?',
+    a: 'An endpoint is any Macintosh or Windows device reporting in. Open Source and Enterprise are unlimited. Cloud Pro is flat-rate for unlimited endpoints under fair use — very large fleets (roughly several thousand devices and up) are a better fit for a dedicated Enterprise instance, and we will steer you there rather than degrade a shared tier.',
   },
   {
-    q: 'I want to self-host but still get help — can I?',
-    a: "Yes. Installation, configuration, and support are available as a package whether you run ReportMate yourself or let us manage it. We'll stand up your deployment, tune it to your fleet, migrate you off MunkiReport or Sal, and stay on call — without you giving up control of your data.",
+    q: 'I want to self-host but still get hands-on help — can I?',
+    a: "Yes. Setup, configuration, fleet rollout, and on-call support are available as an Enterprise engagement even when you run ReportMate yourself — we stand up your deployment, tune it to your fleet, push the client to every device, and stay on call, without you ever giving up control of your data.",
   },
   {
     q: 'What does an Enterprise engagement include?',
-    a: 'A scoped package: hands-on installation and configuration, guided migration from MunkiReport, Sal, or spreadsheets, a dedicated instance (managed by us or on-premise), an SLA, and named phone and Slack support. We size each engagement to your fleet — talk to us and we will put together a quote.',
+    a: 'A scoped package: hands-on setup and configuration, a full fleet rollout — we package and deploy the client to every device and confirm it is reporting, then retire your old tool — a dedicated instance (managed by us or on-premise), a response-time guarantee (SLA), a private Slack channel with a named engineer, and help through your security and procurement review. We size each engagement to your fleet — talk to us and we will put together a quote.',
   },
 ];
 ---
@@ -135,16 +119,17 @@ const faqs = [
       <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Flat-rate fleet monitoring.</h1>
       <p class="mt-4 text-xl font-medium text-gray-700">Your fleet grows. Your rates don't.</p>
       <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-        Self-host the whole platform free, forever, on unlimited endpoints. Or let us run it for you. No per-seat
-        traps, no locking your own data behind a paywall.
+        Self-host the whole platform free, forever, on unlimited endpoints. Let us run it for you. Or hand us the
+        whole rollout. No per-seat traps, no locking your own data behind a paywall.
       </p>
     </div>
   </section>
 
   <section class="pb-8">
     <div class="mx-auto max-w-6xl px-6">
-      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-        {tiers.map((tier) => (
+      <!-- 25 / 25 / 50 — two self-serve tiers, then the white-glove slab -->
+      <div class="grid gap-8 lg:grid-cols-4">
+        {selfServeTiers.map((tier) => (
           <div
             class:list={[
               'relative flex flex-col rounded-xl border p-8',
@@ -157,12 +142,20 @@ const faqs = [
               </span>
             )}
             <h3 class="text-lg font-semibold text-gray-900">{tier.name}</h3>
+            <p class="mt-1 text-sm font-medium text-brand-600">{tier.tagline}</p>
             <div class="mt-4">
               <span class="text-4xl font-bold text-gray-900">{tier.price}</span>
               {tier.period && <span class="text-gray-500">{tier.period}</span>}
             </div>
             {tier.annualNote && <p class="mt-1 text-xs font-medium text-brand-600">{tier.annualNote}</p>}
-            <p class="mt-2 text-sm text-gray-600">{tier.description}</p>
+            <p class="mt-3 text-sm text-gray-600">{tier.description}</p>
+
+            {tier.bestFor && (
+              <div class="mt-4 border-t border-gray-100 pt-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Best for</p>
+                <p class="mt-1 text-sm text-gray-600">{tier.bestFor}</p>
+              </div>
+            )}
 
             <ul class="mt-8 flex-1 space-y-3">
               {tier.features.map((feature) => (
@@ -186,50 +179,69 @@ const faqs = [
             </a>
           </div>
         ))}
+
+        <!-- Enterprise — 50% width, the white-glove showcase -->
+        <div class="relative flex flex-col rounded-xl border border-brand-300 bg-gradient-to-br from-brand-50 to-white p-8 shadow-lg shadow-brand-500/10 lg:col-span-2">
+          <span class="absolute -top-3 left-8 rounded-full bg-accent-500 px-3 py-1 text-xs font-semibold text-white">
+            White glove
+          </span>
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Cloud Enterprise</h3>
+              <p class="mt-1 text-sm font-medium text-brand-600">We run it, migrate you, and stay on call.</p>
+            </div>
+            <span class="text-4xl font-bold text-gray-900">Custom</span>
+          </div>
+          <p class="mt-3 max-w-xl text-sm text-gray-600">
+            We stand ReportMate up, deploy the client across your whole fleet, and stand behind it with a
+            response-time guarantee — managed by us or on your own infrastructure.
+          </p>
+
+          <div class="mt-4 border-t border-brand-100 pt-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Best for</p>
+            <p class="mt-1 max-w-xl text-sm text-gray-600">Institutions that want the rollout done for them — and a guarantee.</p>
+          </div>
+
+          <div class="mt-8 grid flex-1 gap-8 sm:grid-cols-2">
+            <ul class="space-y-3">
+              {enterpriseFeatures.map((feature) => (
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                  <svg class="mt-0.5 h-4 w-4 flex-shrink-0 text-accent-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div class="space-y-4">
+              {enterpriseServices.map((service) => (
+                <div class="rounded-xl border border-brand-100 bg-white/70 p-4">
+                  <h4 class="text-sm font-semibold text-gray-900">{service.title}</h4>
+                  <p class="mt-1 text-sm text-gray-600" set:html={service.desc}></p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <a
+            href="mailto:hello@reportmate.app?subject=ReportMate%20Enterprise"
+            class="mt-8 inline-block rounded-lg bg-accent-500 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-accent-600 sm:self-start"
+          >
+            Talk to us about a rollout
+          </a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Platform note + Services & support -->
+  <!-- Platform note -->
   <section class="bg-white pb-24">
-    <div class="mx-auto max-w-6xl space-y-8 px-6">
+    <div class="mx-auto max-w-6xl px-6">
       <div class="rounded-2xl border border-gray-200 bg-gray-50 px-8 py-10 text-center">
         <p class="mx-auto max-w-3xl text-base text-gray-600">
           {includedEverywhere} You pay for who runs it, how it scales, and the support behind it — never to unlock your own data.
         </p>
-      </div>
-
-      <div class="overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white shadow-lg shadow-brand-500/10">
-        <div class="p-8 sm:p-12">
-          <div class="max-w-2xl">
-            <span class="inline-flex items-center rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white">
-              Services &amp; support
-            </span>
-            <h2 class="mt-4 text-3xl font-bold tracking-tight text-gray-900">
-              We'll install it, migrate you, and stay on call
-            </h2>
-            <p class="mt-4 text-lg text-gray-600">
-              Self-hosting or managed, our team can stand ReportMate up for your fleet, move you off your old
-              tooling, and back it with an SLA. Support is a package you add to any plan — not a tier you're forced
-              to climb to.
-            </p>
-          </div>
-
-          <div class="mt-10 grid gap-8 md:grid-cols-3">
-            {services.map((service) => (
-              <div class="rounded-xl border border-brand-100 bg-white/70 p-6">
-                <h3 class="text-base font-semibold text-gray-900">{service.title}</h3>
-                <p class="mt-2 text-sm text-gray-600">{service.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div class="mt-10">
-            <a href="mailto:hello@reportmate.app?subject=ReportMate%20services%20%26%20support" class="inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-700">
-              Talk to us about a package
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   </section>
