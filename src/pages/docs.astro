@@ -12,15 +12,75 @@ import Layout from '../layouts/Layout.astro';
   <style is:inline>
     .sl-elements,
     elements-api {
-      --color-primary: #0074c7;
-      --color-primary-dark: #015da1;
-      --color-primary-darker: #064f85;
-      --color-primary-light: #36adf8;
-      --color-primary-tint: #e0effe;
       --color-link: #0074c7;
-      --color-link-dark: #015da1;
+    }
+    [data-theme='dark'] .sl-elements,
+    [data-theme='dark'] elements-api {
+      --color-link: #36adf8;
+    }
+
+    /* Dark-mode chrome: match the page background and the shared nav header to the
+       active theme so the Stoplight panel doesn't sit under a white site header.
+       Scoped to [data-theme='dark'], which only the docs page sets. */
+    [data-theme='dark'] body {
+      background-color: #0d1117;
+    }
+    [data-theme='dark'] nav {
+      background-color: rgba(13, 17, 23, 0.8) !important;
+      border-bottom-color: rgba(240, 246, 252, 0.1) !important;
+    }
+    [data-theme='dark'] nav .text-gray-900 {
+      color: #e6edf3 !important;
+    }
+    [data-theme='dark'] nav .text-gray-500 {
+      color: #8b949e !important;
+    }
+    [data-theme='dark'] nav .text-gray-600 {
+      color: #adbac7 !important;
+    }
+    /* API + GitHub pill buttons */
+    [data-theme='dark'] nav a.bg-white {
+      background-color: #161b22 !important;
+      border-color: rgba(240, 246, 252, 0.1) !important;
+      color: #adbac7 !important;
+    }
+    [data-theme='dark'] nav a.bg-white:hover {
+      background-color: #21262d !important;
+    }
+    /* Active "API" pill (this page) */
+    [data-theme='dark'] nav a.bg-brand-50 {
+      background-color: rgba(54, 173, 248, 0.15) !important;
+      border-color: rgba(54, 173, 248, 0.3) !important;
+      color: #79c0ff !important;
     }
   </style>
+
+  <!--
+    Stoplight Elements stores its theme mode in localStorage under "mosaic-theme" and defaults to
+    "light" — that mode drives BOTH the CSS theme and the code-sample (prism) palette, which is why
+    the docs ignored the OS and rendered light code on dark panels. Seed the mode to "system" so it
+    follows prefers-color-scheme for everything, and mirror it onto <html data-theme> immediately so
+    the page chrome has the right theme on first paint (before the web component mounts).
+  -->
+  <script is:inline>
+    (function () {
+      try {
+        var KEY = 'mosaic-theme';
+        var stored = null;
+        try { stored = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+        if (!stored || stored.mode !== 'system') {
+          localStorage.setItem(KEY, JSON.stringify({ mode: 'system' }));
+        }
+      } catch (e) {}
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      function apply() {
+        document.documentElement.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
+      }
+      apply();
+      if (mq.addEventListener) mq.addEventListener('change', apply);
+      else if (mq.addListener) mq.addListener(apply);
+    })();
+  </script>
 
   <div class="h-[calc(100vh-4rem)]">
     <elements-api
