@@ -5,7 +5,7 @@ import { modules } from '../data/modules.js';
 
 const apiGroups = [
   { tag: 'Devices', desc: 'Per-device detail, fast info, events, install logs, usage history, and any single module document.', method: 'GET', path: '/api/v1/device/{serial}/modules/{module}' },
-  { tag: 'Fleet', desc: 'Bulk analytics across the whole fleet: hardware, applications, installs, identity, inventory, plus distributions and filters.', method: 'GET', path: '/api/v1/devices/hardware' },
+  { tag: 'Fleet', desc: 'Bulk analytics across the whole fleet: hardware, applications, installs, identity, inventory, plus distributions and filters.', method: 'GET', path: '/api/v1/hardware' },
   { tag: 'Events', desc: 'Ingest device check-ins and retrieve the event stream and raw payloads.', method: 'POST', path: '/api/v1/events' },
   { tag: 'Statistics', desc: 'Pre-aggregated dashboard data and install statistics for at-a-glance fleet health.', method: 'GET', path: '/api/v1/dashboard' },
   { tag: 'Settings', desc: 'Tenant settings and dynamic inventory key discovery.', method: 'GET', path: '/api/v1/settings' },
@@ -110,8 +110,8 @@ const apiGroups = [
       <h2 class="text-2xl font-bold text-gray-900">A documented REST API for everything</h2>
       <p class="mt-3 max-w-3xl text-gray-600">
         FastAPI with a full OpenAPI specification — 40+ versioned endpoints under <code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm">/api/v1</code>.
-        Authenticated with <code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm">X-Client-Passphrase</code>, an
-        internal secret for service-to-service, or Azure Managed Identity.
+        Authenticated with per-client API keys (<code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm">X-API-Key</code>)
+        carrying read, ingest, and admin scopes, a client passphrase, or an internal secret for service-to-service.
       </p>
       <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {apiGroups.map(({ tag, desc, method, path }) => (
