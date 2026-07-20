@@ -87,7 +87,7 @@
           "health"
         ],
         "summary": "Signalr Negotiate",
-        "description": "SignalR/WebPubSub negotiate endpoint.\n\nGenerates a client access token for Azure Web PubSub connection.\nThe token allows clients to connect and receive real-time events.",
+        "description": "SignalR/WebPubSub negotiate endpoint.\n\nGenerates a client access token for Azure Web PubSub connection. The token\ngrants a live view of the fleet event stream, so callers must authenticate;\nthe dashboard reaches this through the BFF proxy, which supplies the\ninternal secret.",
         "operationId": "signalr_negotiate_api_v1_negotiate_get",
         "parameters": [
           {
@@ -98,6 +98,78 @@
               "type": "string",
               "default": "dashboard",
               "title": "Device"
+            }
+          },
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
             }
           }
         ],
@@ -223,6 +295,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -326,6 +407,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -442,6 +532,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -543,6 +642,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -671,6 +779,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -772,6 +889,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -885,6 +1011,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -1024,6 +1159,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -1127,6 +1271,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -1432,6 +1585,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -1617,6 +1779,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -1748,6 +1919,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -1991,6 +2171,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -2437,6 +2626,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -2572,6 +2770,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -2675,6 +2882,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -2819,6 +3035,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -2955,6 +3180,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -3099,6 +3333,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -3237,6 +3480,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -3386,6 +3638,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -3524,6 +3785,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -3668,6 +3938,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -3799,6 +4078,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -3943,6 +4231,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -4084,6 +4381,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -4222,6 +4528,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -4381,6 +4696,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -4472,6 +4796,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -4577,6 +4910,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -4698,6 +5040,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -4791,6 +5142,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -4899,6 +5259,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -5001,6 +5370,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -5114,6 +5492,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -5224,6 +5611,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -5320,6 +5716,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -5413,6 +5818,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -5526,6 +5940,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -5634,6 +6057,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -5727,6 +6159,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -5834,6 +6275,15 @@
             }
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
             "name": "X-Forwarded-For",
             "in": "header",
             "required": false,
@@ -5936,6 +6386,15 @@
             "schema": {
               "type": "string",
               "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
             }
           },
           {
@@ -6709,6 +7168,26 @@
         ],
         "title": "ValidationError"
       }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Per-client scoped API key (`rm_<id>_<secret>`), carrying read / ingest / admin scopes. Preferred."
+      },
+      "ClientPassphrase": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Client-Passphrase",
+        "description": "Shared client passphrase (Windows/macOS agents; legacy)."
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "OIDC bearer token (provider-agnostic federated SSO)."
+      }
     }
   },
   "tags": [
@@ -6739,6 +7218,17 @@
     {
       "name": "settings",
       "description": "Server-side org settings: inventory mapping and security rules"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    },
+    {
+      "ClientPassphrase": []
+    },
+    {
+      "BearerAuth": []
     }
   ],
   "servers": [
