@@ -4,9 +4,8 @@
     "title": "ReportMate API",
     "description": "\n## ReportMate Device Management and Telemetry API\n\nReportMate provides a comprehensive REST API for managing device fleets and collecting telemetry data.\n\n### Features\n- **Device Management**: Query, archive, and delete devices\n- **Fleet Analytics**: Bulk endpoints for hardware, software, network, and security data\n- **Event Logging**: Real-time event ingestion and retrieval\n- **Module Data**: Access individual module data (system, hardware, network, etc.)\n\n### Authentication\nAll endpoints require authentication via one of:\n- `X-Client-Passphrase` header (Windows/macOS clients)\n- `X-Internal-Secret` header (container-to-container)\n- Azure Managed Identity (when Easy Auth is configured)\n\n### Rate Limiting\nAPI requests are subject to rate limiting. Contact support for increased limits.\n    ",
     "contact": {
-      "name": "ReportMate Support",
-      "url": "https://reportmate.ecuad.ca/",
-      "email": "support@ecuad.ca"
+      "name": "ReportMate",
+      "url": "https://reportmate.app"
     },
     "license": {
       "name": "AGPL-3.0",
