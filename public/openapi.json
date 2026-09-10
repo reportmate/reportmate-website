@@ -5,7 +5,7 @@
     "description": "\n## ReportMate Device Management and Telemetry API\n\nReportMate provides a comprehensive REST API for managing device fleets and collecting telemetry data.\n\n### Features\n- **Device Management**: Query, archive, and delete devices\n- **Fleet Analytics**: Bulk endpoints for hardware, software, network, and security data\n- **Event Logging**: Real-time event ingestion and retrieval\n- **Module Data**: Access individual module data (system, hardware, network, etc.)\n\n### Authentication\nAll endpoints require authentication via one of:\n- `X-Client-Passphrase` header (Windows/macOS clients)\n- `X-Internal-Secret` header (container-to-container)\n- Azure Managed Identity (when Easy Auth is configured)\n\n### Rate Limiting\nAPI requests are subject to rate limiting. Contact support for increased limits.\n    ",
     "contact": {
       "name": "ReportMate",
-      "url": "https://reportmate.app"
+      "url": "https://reportmate.app/"
     },
     "license": {
       "name": "AGPL-3.0",
@@ -596,6 +596,128 @@
             "schema": {
               "type": "string",
               "title": "Serial Number"
+            }
+          },
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/device/{serial_number}/logs/{tool}": {
+      "get": {
+        "tags": [
+          "devices"
+        ],
+        "summary": "Get Device Log Root",
+        "description": "Get one management tool's log root, tails included.\n\nThe device and module endpoints strip every root's tail because the tails\nare the bulk of the management module's logs section and only one is wanted at a time. This\nendpoint returns the single root for ``tool`` (installs, bootstrap,\nreports, state, encryption, users, utilities) with its tails intact.",
+        "operationId": "get_device_log_root_api_v1_device__serial_number__logs__tool__get",
+        "parameters": [
+          {
+            "name": "serial_number",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Serial Number"
+            }
+          },
+          {
+            "name": "tool",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tool"
             }
           },
           {
@@ -1329,7 +1451,7 @@
           "fleet"
         ],
         "summary": "Get Fleet Applications Usage",
-        "description": "Fleet-wide application usage aggregation from `usage_history`.\n\nAggregates per-app totals across all devices within the lookback window,\nwith optional inventory-based scoping (usages/catalogs/locations) and\nper-app filtering. Returns the shape consumed by the Generate Report ->\nUtilization view on /devices/applications.",
+        "description": "Fleet-wide application usage aggregation from `usage_history`.\n\nAggregates per-app totals across all devices within the lookback window,\nwith optional inventory-based scoping (usages/catalogs/locations) and\nper-app filtering. Returns the shape consumed by the Generate Report ->\nUtilization view on /devices/applications.\n\nWhich number to quote, because two of them look interchangeable and are not:\n\n- **activeHours** is the faculty-facing figure: foreground *and* user input\n  within the prior 300s. **totalHours** is summed process lifetime with no\n  wall-clock ceiling and is diagnostic only.\n- **activeDeviceCount / activeUserCount** count only devices and users that\n  contributed non-zero active time. **deviceCount / userCount** count every\n  device and user that produced any usage row at all, including rows that\n  are pure background process time.\n- **installedDeviceCount** is the number of in-scope devices whose\n  applications inventory lists the app, folded with the same alias rules.\n  It is the only install figure here; deviceCount is not one.\n\nFor a licence or seat question, use the active counts. The plain counts\ndescribe installation footprint, which for a background service is close to\nthe whole managed fleet -- Houdini reported 184 devices and 229 users\nagainst 0.5 active hours over 30 days, and Chrome 218 devices against 13\nusers. Both are returned because footprint is a legitimate question; it is\njust not the same question, and the names are the only thing distinguishing\nthem.\n\n`isSingleActiveUser` is the seat-relevant form of `isSingleUser`, which is\nretained unchanged for existing callers.",
         "operationId": "get_fleet_applications_usage_api_v1_applications_usage_get",
         "parameters": [
           {
@@ -2681,7 +2803,7 @@
           "fleet"
         ],
         "summary": "Get Bulk Hardware",
-        "description": "Bulk hardware endpoint.\n\nReturns flattened list of hardware details across all devices.\nBy default, archived devices are excluded. Use includeArchived=true to include them.\n\n**Response includes:**\n- Device identifiers (serial number, device ID, name)\n- Hardware specs (manufacturer, model, CPU, memory, storage, GPU)\n- OS information (name, version, architecture)",
+        "description": "Bulk hardware endpoint.\n\nReturns flattened list of hardware details across all devices.\nBy default, archived devices are excluded. Use includeArchived=true to include them.\n\n**Response includes:**\n- Device identifiers (serial number, device ID, name)\n- Hardware specs (manufacturer, model, CPU, memory, storage, GPU)\n- OS information (name, version, architecture)\n- Attached displays, normalized across both clients, keyed for asset inventory\n- Network position: active IP, DNS servers, a physically-on-campus flag,\n  and a campus-DNS flag (the two differ over VPN)\n\n**Pagination:** limit and offset are both applied in Python, over the full\nresult set. Pushing limit into the SQL instead -- which this endpoint used\nto do -- silently breaks offset: the query returns the first N rows and the\nslice then takes offset..offset+N *of those*, so any offset >= N answers an\nempty list. A caller paging with a fixed page size sees that empty second\npage, reads it as the end of the list, and stops with a partial result and\nno error. Measured against a live deployment: a page size of 500 returned\n500 records and every offset at or above 500 returned nothing.",
         "operationId": "get_bulk_hardware_api_v1_hardware_get",
         "parameters": [
           {
@@ -2701,14 +2823,20 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer",
-              "maximum": 5000,
-              "minimum": 1,
-              "description": "Maximum devices to return (default 2000, max 5000)",
-              "default": 2000,
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 5000,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum items to return",
               "title": "Limit"
             },
-            "description": "Maximum devices to return (default 2000, max 5000)"
+            "description": "Maximum items to return"
           },
           {
             "name": "offset",
@@ -3993,7 +4121,7 @@
           "fleet"
         ],
         "summary": "Get Bulk System",
-        "description": "Bulk system endpoint for fleet-wide OS and system information.\n\nReturns devices with OS details, uptime, updates, services, etc.\nUsed by /devices/system page for fleet-wide system visibility.\nBy default, archived devices are excluded. Use includeArchived=true to include them.\n\nSupports limit parameter for performance (defaults to 1000 devices, max 5000).\n\n**Response includes:**\n- Device identifiers and inventory\n- Operating system name, version, build number\n- System uptime, boot time\n- Pending updates and service status (in raw field)",
+        "description": "Bulk system endpoint for fleet-wide OS and system information.\n\nReturns devices with OS details, uptime, updates, services, etc.\nUsed by /devices/system page for fleet-wide system visibility.\nBy default, archived devices are excluded. Use includeArchived=true to include them.\n\nlimit/offset page the response, matching /management and /installs/full. Omitting\nlimit returns every device; a fixed default would truncate the fleet silently once\nit grew past that number, which is the failure this endpoint already had.\n\n**Response includes:**\n- Device identifiers and inventory\n- Operating system name, version, build number\n- System uptime, boot time\n- Pending updates and service status (in raw field)",
         "operationId": "get_bulk_system_api_v1_system_get",
         "parameters": [
           {
@@ -4013,13 +4141,20 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer",
-              "maximum": 5000,
-              "description": "Maximum number of devices to return (default 1000, max 5000)",
-              "default": 1000,
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 5000,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum items to return",
               "title": "Limit"
             },
-            "description": "Maximum number of devices to return (default 1000, max 5000)"
+            "description": "Maximum items to return"
           },
           {
             "name": "offset",
@@ -4579,6 +4714,257 @@
         }
       }
     },
+    "/api/v1/management/logs/{tool}": {
+      "get": {
+        "tags": [
+          "fleet",
+          "fleet"
+        ],
+        "summary": "Get Fleet Log Lines",
+        "description": "Sweep one management tool's log tails across the whole fleet.\n\n``tool`` is a log root key (installs, bootstrap, reports, state, encryption,\nusers, utilities, notifications, mdm, installer). Every device's tails for\nthat root are read straight from the management module in Postgres; when\n``levels`` excludes info the narrowing happens in the query, so a sweep for\nerrors and warnings ships only those lines. Each result carries the device,\nthe root's facts and the matching lines with their file and level;\n``summary=true`` adds the message patterns behind them, normalised so the\nsame fault on many devices is one row with a device count.",
+        "operationId": "get_fleet_log_lines_api_v1_management_logs__tool__get",
+        "parameters": [
+          {
+            "name": "tool",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tool"
+            }
+          },
+          {
+            "name": "levels",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated levels to return: error, warning, info, debug (default error,warning)",
+              "title": "Levels"
+            },
+            "description": "Comma-separated levels to return: error, warning, info, debug (default error,warning)"
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "windows or macos",
+              "title": "Platform"
+            },
+            "description": "windows or macos"
+          },
+          {
+            "name": "file",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only lines from this file within the root, e.g. run.log",
+              "title": "File"
+            },
+            "description": "Only lines from this file within the root, e.g. run.log"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Case-insensitive substring the line must contain",
+              "title": "Q"
+            },
+            "description": "Case-insensitive substring the line must contain"
+          },
+          {
+            "name": "summary",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Also return fleet-wide message patterns (same fault on many devices counted once)",
+              "default": false,
+              "title": "Summary"
+            },
+            "description": "Also return fleet-wide message patterns (same fault on many devices counted once)"
+          },
+          {
+            "name": "maxLinesPerDevice",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 5000,
+              "minimum": 1,
+              "default": 200,
+              "title": "Maxlinesperdevice"
+            }
+          },
+          {
+            "name": "includeArchived",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Includearchived"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 5000,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum devices to return",
+              "title": "Limit"
+            },
+            "description": "Maximum devices to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/events": {
       "get": {
         "tags": [
@@ -4752,6 +5138,201 @@
         "description": "Submit device events and unified module data.\n\nThis endpoint handles:\n- Device registration/update\n- Module data storage (system, hardware, installs, network, etc.)\n- Event creation for tracking\n\nExpected payload structure:\n{\n    \"metadata\": {\n        \"deviceId\": \"UUID\",\n        \"serialNumber\": \"SERIAL\",\n        \"collectedAt\": \"ISO8601\",\n        \"clientVersion\": \"version\",\n        \"platform\": \"Windows|macOS\",\n        \"collectionType\": \"Full|Single\",\n        \"enabledModules\": [\"system\", \"hardware\", ...]\n    },\n    \"events\": [...],  # Optional event messages\n    \"system\": {...},   # Module data (top-level keys)\n    \"hardware\": {...},\n    \"installs\": {...},\n    ...\n}",
         "operationId": "submit_events_api_v1_events_post",
         "parameters": [
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/failures": {
+      "get": {
+        "tags": [
+          "events",
+          "events"
+        ],
+        "summary": "Get Ingest Failures",
+        "description": "Rejected device check-ins (failed registrations).\n\nEvery device request that was turned away -- bad or missing credentials,\nmalformed payload, invalid serial -- is recorded with whatever identity\nthe device presented. This answers \"the client was installed but the\ndevice never appeared\": if the machine reached the server at all, it is\nlisted here with the reason it was rejected.\n\nReason codes: auth -> invalid_passphrase, invalid_api_key,\ninvalid_bearer_token, invalid_internal_secret, missing_credentials,\ninsufficient_scope; validation -> upload_aborted, body_unreadable,\nempty_body, malformed_json, invalid_payload, empty_serial,\nsentinel_serial, short_serial, hostname_serial, serial_equals_hostname,\nnul_in_payload, usage_out_of_bounds; throttle -> rate_limited;\nserver_error -> internal_error, usage_write_failed.\n\nrate_limited and internal_error are recorded at the status the caller\nactually received. usage_write_failed is recorded at 500 even though the\ncheck-in returned 200: the device was not turned away, but its usage rows\nwere lost server-side, and data loss belongs in the default view rather\nthan filed under repairs. nul_in_payload and usage_out_of_bounds are recorded at\n200 -- the check-in was accepted, but it carried a client defect worth\nseeing.\n\nThose two are therefore NOT failures, and ``outcome`` keeps them out of a\nview whose whole promise is \"these devices did not get through\". A client\ndefect that the server repairs can be several thousand rows a day -- large\nenough to bury the handful of genuinely rejected devices this page exists\nto surface -- while still being worth watching until the client-side fix\nrolls out.\n\nupload_aborted / body_unreadable / empty_body are transport failures --\nthe device reached the server but its payload did not arrive intact.\nmalformed_json means a body that arrived and did not parse. The detail\ncarries declared vs received byte counts so the two stay separable.\n\nA transport failure is only a failed check-in if nothing arrived\nafterwards. The clients retry three times with backoff, so a dropped\nupload is normally resent down a fresh connection seconds later and the\ndata lands; counting the dropped attempt as a device that was turned away\ndescribes an outage that is not happening. A transport row whose device\nhas a later successful check-in is therefore ``retried``, not\n``rejected``. Only transport reasons qualify: a malformed body or a bad\npassphrase is resent identically, so a later success says nothing about\nthat check-in.\n\noutcome is derived from the recorded status and devices.last_seen rather\nthan a stored flag, so it reads correctly over history as well, and a row\nreclassifies on its own as soon as the device gets back in.\ncounts.rejected / counts.retried / counts.accepted are always all present\nso the other sides are one click away rather than invisible.",
+        "operationId": "get_ingest_failures_api_v1_events_failures_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "description": "Maximum number of failures to return",
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Maximum number of failures to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of failures to skip (for pagination)",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of failures to skip (for pagination)"
+          },
+          {
+            "name": "serial",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by serial number (case-insensitive substring)",
+              "title": "Serial"
+            },
+            "description": "Filter by serial number (case-insensitive substring)"
+          },
+          {
+            "name": "reason",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by rejection reason code",
+              "title": "Reason"
+            },
+            "description": "Filter by rejection reason code"
+          },
+          {
+            "name": "hours",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2160,
+              "minimum": 1,
+              "description": "Look-back window in hours (default 7 days)",
+              "default": 168,
+              "title": "Hours"
+            },
+            "description": "Look-back window in hours (default 7 days)"
+          },
+          {
+            "name": "outcome",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(rejected|retried|accepted|all)$",
+              "description": "rejected (default) = turned away and nothing has arrived since; retried = the upload dropped but the client's retry landed; accepted = kept but repaired on the way in; all = every recorded row",
+              "default": "rejected",
+              "title": "Outcome"
+            },
+            "description": "rejected (default) = turned away and nothing has arrived since; retried = the upload dropped but the client's retry landed; accepted = kept but repaired on the way in; all = every recorded row"
+          },
           {
             "name": "X-API-PASSPHRASE",
             "in": "header",
@@ -5088,111 +5669,6 @@
         }
       }
     },
-    "/api/v1/stats/installs": {
-      "get": {
-        "tags": [
-          "statistics",
-          "statistics"
-        ],
-        "summary": "Get Install Stats",
-        "description": "Get aggregated install statistics for dashboard widgets.\n\nReturns pre-computed counts from Cimian installs data without transferring\nfull installs module data for all devices. Optimized for dashboard performance.\n\nReturns:\n    {\n        \"devicesWithErrors\": int,      // Devices with failed/needs_reinstall\n        \"devicesWithWarnings\": int,    // Devices with pending/updates (no errors)\n        \"totalFailedInstalls\": int,    // Total count of failed installs\n        \"totalWarnings\": int,          // Total count of warnings\n        \"lastUpdated\": str            // ISO8601 timestamp\n    }",
-        "operationId": "get_install_stats_api_v1_stats_installs_get",
-        "parameters": [
-          {
-            "name": "X-API-PASSPHRASE",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Passphrase"
-            }
-          },
-          {
-            "name": "X-Client-Passphrase",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "X-Client-Passphrase"
-            }
-          },
-          {
-            "name": "X-Internal-Secret",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "X-Internal-Secret"
-            }
-          },
-          {
-            "name": "X-MS-CLIENT-PRINCIPAL-ID",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "X-Ms-Client-Principal-Id"
-            }
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Authorization"
-            }
-          },
-          {
-            "name": "X-Forwarded-For",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "X-Forwarded-For"
-            }
-          },
-          {
-            "name": "User-Agent",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "User-Agent"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/device/{serial_number}/archive": {
       "patch": {
         "tags": [
@@ -5421,6 +5897,543 @@
         }
       }
     },
+    "/api/v1/admin/usage-history/date-anomalies": {
+      "get": {
+        "tags": [
+          "admin",
+          "admin"
+        ],
+        "summary": "Usage History Date Anomalies",
+        "description": "Rows in usage_history whose `date` could not have been produced by a\nhealthy client.\n\nRead-only. Exists because neither the fleet nor the per-device usage\nendpoint can see these rows: both clamp their lookback to 548 days, so a\nrow dated 1976 is invisible to every normal query while still being\ncounted by aggregates that scan the whole table.\n\nTwo buckets, each a different defect:\n\n- **tooOld** - a date below the floor. A client cannot have observed usage\n  before it existed, so this is a parsing or conversion fault.\n- **inFuture** - a date after today. Usually a device clock, but it also\n  lands rows in windows that have not happened yet, where they will be\n  silently included the moment the window arrives.\n\n`updated_at` is the field that matters when reading the result: it is when\nthe row was last written, so it separates a historical mess that a baseline\nreset will clear from a fault that is still occurring and will simply\nrepopulate.",
+        "operationId": "usage_history_date_anomalies_api_v1_admin_usage_history_date_anomalies_get",
+        "parameters": [
+          {
+            "name": "floor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Rows dated before this YYYY-MM-DD are implausible (default: 548 days ago, the API's own lookback ceiling)",
+              "title": "Floor"
+            },
+            "description": "Rows dated before this YYYY-MM-DD are implausible (default: 548 days ago, the API's own lookback ceiling)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "description": "Maximum sample rows returned per bucket",
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Maximum sample rows returned per bucket"
+          },
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/usage-history/integrity": {
+      "get": {
+        "tags": [
+          "admin",
+          "admin"
+        ],
+        "summary": "Usage History Integrity",
+        "description": "Physical-plausibility check over recent usage_history rows, per platform.\n\nThe accuracy checks that gated September collection were run by hand\nagainst the fleet endpoints and per-device histories. This is the same\ncheck as one query so a timer can run it every day through the term and\nsay out loud when a client regression starts inflating the record again.\n\nEverything here is a hard physical bound, not a heuristic:\n\n- a duration cannot be negative;\n- foreground cannot exceed total, and active cannot exceed foreground,\n  beyond one second of rounding slack;\n- a device cannot accumulate more than 24 hours of foreground or active\n  time in one calendar day, summed across its applications.\n\nThe per-platform block for the last complete day gives the day's shape\n(devices with rows, foreground and active hours per device, launches) so\na check that passes the bounds still shows whether the fleet moved.\ntotal_seconds is process lifetime with no wall-clock ceiling and is not\nchecked against the day; see the usage endpoint for why it is not a\nreportable figure.",
+        "operationId": "usage_history_integrity_api_v1_admin_usage_history_integrity_get",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 90,
+              "minimum": 1,
+              "description": "Lookback window in days, by row date",
+              "default": 7,
+              "title": "Days"
+            },
+            "description": "Lookback window in days, by row date"
+          },
+          {
+            "name": "sample",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Maximum offending device-days returned",
+              "default": 20,
+              "title": "Sample"
+            },
+            "description": "Maximum offending device-days returned"
+          },
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/usage-history/export": {
+      "get": {
+        "tags": [
+          "admin",
+          "admin"
+        ],
+        "summary": "Usage History Export",
+        "description": "Stream usage_history rows for a date range as CSV.\n\nusage_history is the one table a device cannot re-report: every other\nmodule row is a current-state snapshot that self-heals on the next\ncheck-in. This is the read side of its archive -- the alerts app pulls\neach closed month through here and writes it to blob storage, so the\nrecord outlives the database's backup window.\n\nHalf-open range ``[from, to)`` on the row date, ordered by date, device\nand application so two exports of the same range are byte-identical.\nRows stream from a server-side cursor in batches; a month of the current\nfleet is a few hundred thousand rows and never sits in memory at once.",
+        "operationId": "usage_history_export_api_v1_admin_usage_history_export_get",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "First row date to include, YYYY-MM-DD",
+              "title": "From"
+            },
+            "description": "First row date to include, YYYY-MM-DD"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "First row date to exclude, YYYY-MM-DD",
+              "title": "To"
+            },
+            "description": "First row date to exclude, YYYY-MM-DD"
+          },
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/usage-history/reset-baseline": {
+      "post": {
+        "tags": [
+          "admin",
+          "admin"
+        ],
+        "summary": "Reset Usage History Baseline",
+        "description": "Archive and remove usage_history rows before a cutoff date.\n\n**This is a DESTRUCTIVE operation on the live reporting table.**\n\nWhy it exists: usage_history accumulates client-sent window deltas, so a\nclient-side counting defect is written into the table permanently and\ncannot be recomputed from anything the server still holds. Correcting one\nmeans removing the affected rows. Every row is copied verbatim into\nusage_history_archive first, so the reset is recoverable and \"what did we\nreport before\" stays answerable.\n\nNot the same as /admin/usage-history/cleanup, which enforces a minimum\nretention of one month and exists for routine ageing-out. This takes an\nexplicit cutoff so a term baseline can start clean, and it archives rather\nthan discards.\n\nWithout ``confirm=true`` this returns a preview of exactly what would be\naffected and changes nothing. Run the preview first.",
+        "operationId": "reset_usage_history_baseline_api_v1_admin_usage_history_reset_baseline_post",
+        "parameters": [
+          {
+            "name": "before",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Archive and remove rows dated before this YYYY-MM-DD (exclusive)",
+              "title": "Before"
+            },
+            "description": "Archive and remove rows dated before this YYYY-MM-DD (exclusive)"
+          },
+          {
+            "name": "confirm",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Must be true to execute; otherwise a preview is returned",
+              "default": false,
+              "title": "Confirm"
+            },
+            "description": "Must be true to execute; otherwise a preview is returned"
+          },
+          {
+            "name": "reason",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Recorded on the archived rows so a batch can be identified later",
+              "default": "",
+              "title": "Reason"
+            },
+            "description": "Recorded on the archived rows so a batch can be identified later"
+          },
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/usage-history/cleanup": {
       "delete": {
         "tags": [
@@ -5547,7 +6560,7 @@
           "admin"
         ],
         "summary": "Clear Stale Installs Errors",
-        "description": "Clear error and warning fields from installs data for stale devices.\n\nTargets devices whose installs data hasn't been updated in the specified\nnumber of days. Clears per-item error/warning fields in Cimian data and\nerror/warning strings in Munki data.\n\nThis is a manual maintenance operation - not automated.\n\n**Authentication Required:**\n- Windows clients: X-API-PASSPHRASE header\n- Azure resources: X-MS-CLIENT-PRINCIPAL-ID header (Managed Identity)",
+        "description": "Clear error and warning fields from installs data for stale devices.\n\nTargets devices that have not checked in (devices.last_seen) for the\nspecified number of days. Clears per-item error/warning fields in Cimian data and\nerror/warning strings in Munki data.\n\nThis is a manual maintenance operation - not automated.\n\n**Authentication Required:**\n- Windows clients: X-API-PASSPHRASE header\n- Azure resources: X-MS-CLIENT-PRINCIPAL-ID header (Managed Identity)",
         "operationId": "clear_stale_installs_errors_api_v1_admin_installs_clear_errors_delete",
         "parameters": [
           {
@@ -5557,12 +6570,170 @@
             "schema": {
               "type": "integer",
               "maximum": 365,
-              "minimum": 1,
-              "description": "Clear errors/warnings from devices that haven't reported in this many days",
+              "minimum": 0,
+              "description": "Clear errors/warnings from devices that have not reported in this many days; 0 clears every device (they re-report their true state on the next check-in)",
               "default": 10,
               "title": "Days"
             },
-            "description": "Clear errors/warnings from devices that haven't reported in this many days"
+            "description": "Clear errors/warnings from devices that have not reported in this many days; 0 clears every device (they re-report their true state on the next check-in)"
+          },
+          {
+            "name": "item_age_days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 365,
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Also clear individual errors/warnings whose own last attempt is older than this many days, on devices that ARE still checking in. Keying only on device check-in leaves week-old failures on machines that phone home daily.",
+              "title": "Item Age Days"
+            },
+            "description": "Also clear individual errors/warnings whose own last attempt is older than this many days, on devices that ARE still checking in. Keying only on device check-in leaves week-old failures on machines that phone home daily."
+          },
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/installs/reclassify": {
+      "post": {
+        "tags": [
+          "admin",
+          "admin"
+        ],
+        "summary": "Reclassify Stored Installs",
+        "description": "Re-run the install-item classifier over stored installs rows.\n\nEvery item carries the state ingest decided for it, and the four counter\ncolumns the dashboard reads are stamped at the same moment. Both therefore\nreflect whatever the classifier said on that device's last check-in, so a\nchange to the classifier reaches a device only when it next reports — up to\nan hour for a lab machine, and far longer for a laptop that sleeps.\n\nThis applies the current classifier to what is already stored, so the fleet\nagrees with the code immediately. It is the same two functions ingest calls,\nnot a second implementation, and it is idempotent: a row whose stamps and\ncounters already match is left untouched, so the JSONB is not rewritten and\nthe TOAST churn that would come with it is avoided.\n\nBatched and manual, never automated — the database is IOPS-constrained and a\ntable-wide rewrite belongs off the request path of every other caller.\n\n**Authentication Required:**\n- Windows clients: X-API-PASSPHRASE header\n- Azure resources: X-MS-CLIENT-PRINCIPAL-ID header (Managed Identity)",
+        "operationId": "reclassify_stored_installs_api_v1_admin_installs_reclassify_post",
+        "parameters": [
+          {
+            "name": "batch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "description": "Rows to read per batch; the write is one statement per changed row",
+              "default": 200,
+              "title": "Batch"
+            },
+            "description": "Rows to read per batch; the write is one statement per changed row"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Stop after this many rows, for a rehearsal against part of the fleet",
+              "title": "Limit"
+            },
+            "description": "Stop after this many rows, for a rehearsal against part of the fleet"
           },
           {
             "name": "X-API-PASSPHRASE",
@@ -7228,12 +8399,6 @@
     },
     {
       "BearerAuth": []
-    }
-  ],
-  "servers": [
-    {
-      "url": "https://api.reportmate.app",
-      "description": "ReportMate API (production)"
     }
   ]
 }

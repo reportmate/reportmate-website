@@ -1,0 +1,61 @@
+name: openapi-sync
+
+# Keep public/openapi.json, which /docs renders, in step with the deployed
+# API. The spec is exported from reportmate-api's own source with its
+# scripts/export_openapi.py rather than copied by hand, so it cannot fall
+# behind the routes the API actually serves.
+#
+# A commit made with GITHUB_TOKEN does not start other workflows, so this
+# workflow dispatches deploy.yml itself after pushing a change.
+on:
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: openapi-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: reportmate/reportmate-api
+          path: api
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Export the spec from the API source
+        working-directory: api
+        run: |
+          pip install -q -r requirements.txt
+          python scripts/export_openapi.py
+          python -c 'import json; json.load(open("docs/api/openapi.json"))'
+          cp docs/api/openapi.json ../public/openapi.json
+          echo "API_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+
+      - name: Commit and deploy when it changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- public/openapi.json; then
+            echo "openapi.json unchanged"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/openapi.json
+          git commit -m "Sync openapi.json with reportmate-api at $API_SHA"
+          git push origin HEAD:main
+          gh workflow run deploy.yml --ref main
