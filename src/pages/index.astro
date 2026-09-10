@@ -68,7 +68,7 @@ const shots = [
       </h1>
       <p class="mx-auto mt-6 max-w-2xl text-lg text-gray-600">
         ReportMate is open-source endpoint intelligence for Macintosh and Windows. Native clients do the heavy
-        collection and processing <strong class="font-semibold text-gray-900">on each device</strong>, then stream events to a real-time dashboard and API.
+        collection and processing <strong class="font-semibold text-gray-900">on each device</strong>, then stream events to a real-time dashboard, native apps, a command line, and API.
         <strong class="font-semibold text-gray-900">Self-host it, or let us run it for you.</strong>
       </p>
       <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
@@ -101,9 +101,9 @@ const shots = [
   <section class="border-y border-gray-100 bg-gradient-to-b from-white to-brand-50/40">
     <div class="mx-auto grid max-w-6xl divide-y divide-gray-200/70 px-6 sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
       {[
-        { stat: '10', label: 'Data modules per device', color: '#0074c7', mark: 'bars' },
+        { stat: '11', label: 'Data modules per device', color: '#0074c7', mark: 'bars' },
         { stat: '2', label: 'First-class platforms: Macintosh & Windows', color: '#f08a00', mark: 'donut' },
-        { stat: '40+', label: 'Versioned REST API endpoints', color: '#16a596', mark: 'spark' },
+        { stat: '50+', label: 'Versioned REST API endpoints', color: '#16a596', mark: 'spark' },
         { stat: '100%', label: 'Open source and self-hostable', color: '#7a4fa0', mark: 'donut' },
       ].map(({ stat, label, color, mark }) => (
         <div class="px-6 py-10 text-center">
@@ -203,7 +203,7 @@ const shots = [
     <ul class="space-y-3 text-base">
       <li class="flex items-start gap-3">
         <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
-        <span>40+ versioned <code class="rounded bg-brand-900 px-1.5 py-0.5 text-sm">/api/v1</code> endpoints with interactive OpenAPI docs</span>
+        <span>50+ versioned <code class="rounded bg-brand-900 px-1.5 py-0.5 text-sm">/api/v1</code> endpoints with interactive OpenAPI docs and a <a href="/openapi.json" class="underline decoration-brand-400 underline-offset-2">published spec</a></span>
       </li>
       <li class="flex items-start gap-3">
         <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
@@ -212,6 +212,10 @@ const shots = [
       <li class="flex items-start gap-3">
         <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
         <span>Real-time event ingestion and a SignalR/WebSocket negotiate endpoint for live updates</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-400"></span>
+        <span><code class="rounded bg-brand-900 px-1.5 py-0.5 text-sm">reportmateutil</code>: every endpoint as a command, printing the API's JSON unchanged, bundled with the native apps</span>
       </li>
     </ul>
     <p class="text-base text-brand-100">
