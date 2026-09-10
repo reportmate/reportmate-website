@@ -109,9 +109,9 @@ const apiGroups = [
     <div class="mx-auto max-w-6xl px-6">
       <h2 class="text-2xl font-bold text-gray-900">A documented REST API for everything</h2>
       <p class="mt-3 max-w-3xl text-gray-600">
-        FastAPI with a full OpenAPI specification — 40+ versioned endpoints under <code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm">/api/v1</code>.
+        FastAPI with a full OpenAPI specification — 50+ versioned endpoints under <code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm">/api/v1</code>.
         Authenticated with per-client API keys (<code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm">X-API-Key</code>)
-        carrying read, ingest, and admin scopes, a client passphrase, or an internal secret for service-to-service.
+        carrying read, ingest, and admin scopes, an OIDC bearer token, a client passphrase, or an internal secret for service-to-service. The <a href="/openapi.json" class="font-medium text-brand-600 hover:text-brand-700">published spec</a> is regenerated from the API source, so it always matches what is deployed.
       </p>
       <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {apiGroups.map(({ tag, desc, method, path }) => (
@@ -150,8 +150,8 @@ const apiGroups = [
         <div class="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
           <h3 class="text-lg font-semibold text-gray-900">Server stack</h3>
           <ul class="mt-4 space-y-3 text-gray-600">
-            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span><strong>API:</strong> FastAPI with versioned REST endpoints and OpenAPI docs</span></li>
-            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span><strong>Frontend:</strong> Next.js, server-rendered, reader-only with real-time updates</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span><strong>API:</strong> FastAPI with versioned REST endpoints and a published OpenAPI spec</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span><strong>Frontend:</strong> Next.js, server-rendered, reader-only with real-time updates; the same views as native Macintosh and Windows apps</span></li>
             <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span><strong>Database:</strong> PostgreSQL with JSONB, one document per module</span></li>
             <li class="flex items-start gap-2"><span class="mt-1.5 block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500"></span><span><strong>Infrastructure:</strong> Terraform modules for Azure and AWS</span></li>
           </ul>
@@ -163,6 +163,40 @@ const apiGroups = [
     </div>
   </section>
 
+  <!-- Beyond the browser -->
+  <section class="border-t border-gray-100 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <h2 class="text-2xl font-bold text-gray-900">Beyond the browser</h2>
+      <p class="mt-3 max-w-3xl text-gray-600">
+        The same fleet, as native apps and from any shell. Everything reads the one documented API, so what the dashboard shows, the apps show and the command line prints.
+      </p>
+      <div class="mt-10 grid gap-6 md:grid-cols-3">
+        <div class="rounded-2xl border border-gray-100 p-6 shadow-sm">
+          <h3 class="font-semibold text-gray-900">ReportMate for Mac</h3>
+          <p class="mt-2 text-sm text-gray-600">A native SwiftUI app with every fleet view and device tab, <code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm">reportmate://</code> deep links, and a This Mac mode that reads the local agent's cache with no API at all.</p>
+          <a href="https://github.com/reportmate/reportmate-app-swift" class="mt-4 inline-block text-sm font-medium text-brand-600 hover:text-brand-700">reportmate-app-swift &rarr;</a>
+        </div>
+        <div class="rounded-2xl border border-gray-100 p-6 shadow-sm">
+          <h3 class="font-semibold text-gray-900">ReportMate for Windows</h3>
+          <p class="mt-2 text-sm text-gray-600">The dashboard as a native WPF app: fleet views, device detail, and the report for the machine it runs on, built from the local cache.</p>
+          <a href="https://github.com/reportmate/reportmate-app-csharp" class="mt-4 inline-block text-sm font-medium text-brand-600 hover:text-brand-700">reportmate-app-csharp &rarr;</a>
+        </div>
+        <div class="rounded-2xl border border-gray-100 p-6 shadow-sm">
+          <h3 class="font-semibold text-gray-900"><code class="rounded bg-gray-100 px-1.5 py-0.5 text-base">reportmateutil</code></h3>
+          <p class="mt-2 text-sm text-gray-600">One binary with a command for every API route. <code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm">--output json</code> prints exactly what the API returned, so scripts and coding agents read the fleet without an HTTP client. Both apps ship it: on the Mac at <code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm">/usr/local/bin/reportmateutil</code>, on Windows beside the app on the PATH.</p>
+          <div class="mt-4 rounded-lg bg-slate-900 px-3 py-2.5 font-mono text-xs leading-relaxed text-slate-200">
+            <div>export REPORTMATE_API_URL=https://api.example</div>
+            <div>export REPORTMATE_API_KEY=rm_client_secret</div>
+            <div class="mt-1">reportmateutil devices --limit 20</div>
+            <div>reportmateutil device SERIAL --module installs</div>
+            <div>reportmateutil events failures --hours 24</div>
+          </div>
+          <a href="https://github.com/reportmate/reportmate-cli" class="mt-4 inline-block text-sm font-medium text-brand-600 hover:text-brand-700">reportmate-cli &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Roadmap -->
   <section class="py-20">
     <div class="mx-auto max-w-6xl px-6">
@@ -170,21 +204,11 @@ const apiGroups = [
       <div class="mt-8 grid gap-6 md:grid-cols-3">
         <div class="rounded-2xl border border-dashed border-gray-300 p-6">
           <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">Coming soon</div>
-          <h3 class="mt-2 font-semibold text-gray-900">Native dashboard apps</h3>
-          <p class="mt-2 text-sm text-gray-600">First-party Macintosh and Windows apps for browsing your fleet natively, built on the same REST API.</p>
-        </div>
-        <div class="rounded-2xl border border-dashed border-gray-300 p-6">
-          <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">Coming soon</div>
           <h3 class="mt-2 font-semibold text-gray-900">Self-service cloud portal</h3>
           <p class="mt-2 text-sm text-gray-600">Sign up, provision a managed tenant, and manage billing without leaving the browser.</p>
         </div>
         <div class="rounded-2xl border border-dashed border-gray-300 p-6">
-          <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">Coming soon</div>
-          <h3 class="mt-2 font-semibold text-gray-900">Command-line interface</h3>
-          <p class="mt-2 text-sm text-gray-600">Query devices, pull module data, and script your fleet straight from the terminal against the REST API.</p>
-        </div>
-        <div class="rounded-2xl border border-dashed border-gray-300 p-6">
-          <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">Coming soon</div>
+          <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">In progress</div>
           <h3 class="mt-2 font-semibold text-gray-900">MCP server</h3>
           <p class="mt-2 text-sm text-gray-600">A Model Context Protocol server so AI assistants can query your fleet and answer questions in natural language.</p>
         </div>

@@ -10,12 +10,12 @@ const archDiagram = `flowchart TB
     MAC ~~~ WIN
   end
 
-  PAY{{"<b>one event payload</b><br/>10 module documents<br/><small>hardware · system · network · security · applications<br/>installs · inventory · management · identity · peripherals</small>"}}
+  PAY{{"<b>one event payload</b><br/>11 module documents<br/><small>hardware · system · network · security · applications · installs<br/>inventory · management · identity · peripherals · profiles</small>"}}
   EP ==> PAY
 
   subgraph CLOUD["② &nbsp;YOUR CLOUD — Terraform on Azure/AWS, or self-host with Docker"]
     direction LR
-    API["<b>FastAPI</b><br/>ingest + REST /api/v1<br/><small>40+ endpoints · OpenAPI</small>"]
+    API["<b>FastAPI</b><br/>ingest + REST /api/v1<br/><small>50+ endpoints · published OpenAPI spec</small>"]
     DB[("<b>PostgreSQL</b><br/>JSONB per module")]
     RT(["<b>SignalR / Web PubSub</b><br/>real-time push"])
     API --> DB
@@ -26,14 +26,16 @@ const archDiagram = `flowchart TB
   subgraph READ["③ &nbsp;READ — web, native &amp; your tools"]
     direction LR
     WEB["<b>Next.js dashboard</b><br/><small>live fleet view</small>"]
-    APPS["<b>Native Macintosh &amp; Windows apps</b><br/><small>coming soon</small>"]
+    APPS["<b>ReportMate for Mac &amp; Windows</b><br/><small>native apps, bundling reportmateutil</small>"]
     INT["<b>CMDB · SIEM · automation</b><br/><small>via REST API</small>"]
+    CLI["<b>reportmateutil</b><br/><small>every endpoint, from any shell</small>"]
   end
   DB ==> WEB
   RT ==> WEB
   DB ==> APPS
   RT ==> APPS
   API ==> INT
+  API ==> CLI
 
   classDef ep fill:#eff6ff,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
   classDef pay fill:#0074c7,stroke:#015da1,stroke-width:2.5px,color:#ffffff;
@@ -42,7 +44,7 @@ const archDiagram = `flowchart TB
   class MAC,WIN ep;
   class PAY pay;
   class API,DB,RT cloud;
-  class WEB,APPS,INT read;
+  class WEB,APPS,INT,CLI read;
 
   style EP fill:#f8fafc,stroke:#cbd5e1,color:#334155;
   style CLOUD fill:#f8fafc,stroke:#cbd5e1,color:#334155;
@@ -75,7 +77,7 @@ const archDiagram = `flowchart TB
             { n: '2', verb: 'Transmit', where: 'On device', tone: 'device', desc: 'Event sent over HTTPS' },
             { n: '3', verb: 'Ingest', where: 'In your cloud', tone: 'cloud', desc: 'FastAPI receives the event' },
             { n: '4', verb: 'Store', where: 'In your cloud', tone: 'cloud', desc: 'Written to PostgreSQL as JSONB' },
-            { n: '5', verb: 'Read', where: 'Web & native', tone: 'read', desc: 'Dashboard, native apps & API' },
+            { n: '5', verb: 'Read', where: 'Web & native', tone: 'read', desc: 'Dashboard, native apps, CLI & API' },
           ].map(({ n, verb, where, tone, desc }) => (
             <li class="relative flex flex-col items-center text-center">
               <div class="z-10 flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-white shadow-sm ring-4 ring-gray-50">{n}</div>
