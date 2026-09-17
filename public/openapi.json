@@ -4121,7 +4121,7 @@
           "fleet"
         ],
         "summary": "Get Bulk System",
-        "description": "Bulk system endpoint for fleet-wide OS and system information.\n\nReturns devices with OS details, uptime, updates, services, etc.\nUsed by /devices/system page for fleet-wide system visibility.\nBy default, archived devices are excluded. Use includeArchived=true to include them.\n\nlimit/offset page the response, matching /management and /installs/full. Omitting\nlimit returns every device; a fixed default would truncate the fleet silently once\nit grew past that number, which is the failure this endpoint already had.\n\n**Response includes:**\n- Device identifiers and inventory\n- Operating system name, version, build number\n- System uptime, boot time\n- Pending updates and service status (in raw field)",
+        "description": "Bulk system endpoint for fleet-wide OS and system information.\n\nReturns devices with OS details, uptime, updates, services, etc.\nUsed by /devices/system page for fleet-wide system visibility.\nBy default, archived devices are excluded. Use includeArchived=true to include them.\n\nlimit/offset page the response, matching /management and /installs/full. Omitting\nlimit returns every device; a fixed default would truncate the fleet silently once\nit grew past that number, which is the failure this endpoint already had.\n\n**Response includes:**\n- Device identifiers and inventory\n- Operating system name, version, build number\n- System uptime, boot time\n- Pending-update counts and normalized installed-update identities\n- Service and scheduled-task counts",
         "operationId": "get_bulk_system_api_v1_system_get",
         "parameters": [
           {
