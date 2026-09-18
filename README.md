@@ -6,7 +6,7 @@ Source for [reportmate.app](https://reportmate.app) -- the marketing website for
 
 - [Astro](https://astro.build) -- static site generator
 - [Tailwind CSS](https://tailwindcss.com) -- utility-first CSS
-- Hosted on AWS (S3 + CloudFront)
+- Deployed to [Cloudflare Pages](https://pages.cloudflare.com) by `.github/workflows/deploy.yml` on every push to `main`
 
 ## Development
 
@@ -21,7 +21,7 @@ npm run dev
 npm run build
 ```
 
-Output goes to `dist/` -- deploy to S3 or any static host.
+Output goes to `dist/` -- a plain static bundle you can serve from any static host.
 
 ## Pages
 
