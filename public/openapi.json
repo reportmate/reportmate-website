@@ -6301,7 +6301,7 @@
           "admin"
         ],
         "summary": "Reset Usage History Baseline",
-        "description": "Archive and remove usage_history rows before a cutoff date.\n\n**This is a DESTRUCTIVE operation on the live reporting table.**\n\nWhy it exists: usage_history accumulates client-sent window deltas, so a\nclient-side counting defect is written into the table permanently and\ncannot be recomputed from anything the server still holds. Correcting one\nmeans removing the affected rows. Every row is copied verbatim into\nusage_history_archive first, so the reset is recoverable and \"what did we\nreport before\" stays answerable.\n\nNot the same as /admin/usage-history/cleanup, which enforces a minimum\nretention of one month and exists for routine ageing-out. This takes an\nexplicit cutoff so a term baseline can start clean, and it archives rather\nthan discards.\n\nWithout ``confirm=true`` this returns a preview of exactly what would be\naffected and changes nothing. Run the preview first.",
+        "description": "Archive and remove usage_history rows before a cutoff date.\n\nWith ``device`` the reset is limited to those serial numbers, for the case\nwhere one client build wrote bad rows and the rest of the fleet is sound.\n\n**This is a DESTRUCTIVE operation on the live reporting table.**\n\nWhy it exists: usage_history accumulates client-sent window deltas, so a\nclient-side counting defect is written into the table permanently and\ncannot be recomputed from anything the server still holds. Correcting one\nmeans removing the affected rows. Every row is copied verbatim into\nusage_history_archive first, so the reset is recoverable and \"what did we\nreport before\" stays answerable.\n\nNot the same as /admin/usage-history/cleanup, which enforces a minimum\nretention of one month and exists for routine ageing-out. This takes an\nexplicit cutoff so a term baseline can start clean, and it archives rather\nthan discards.\n\nWithout ``confirm=true`` this returns a preview of exactly what would be\naffected and changes nothing. Run the preview first.",
         "operationId": "reset_usage_history_baseline_api_v1_admin_usage_history_reset_baseline_post",
         "parameters": [
           {
@@ -6338,6 +6338,27 @@
               "title": "Reason"
             },
             "description": "Recorded on the archived rows so a batch can be identified later"
+          },
+          {
+            "name": "device",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Limit the reset to these serial numbers; repeat for several",
+              "title": "Device"
+            },
+            "description": "Limit the reset to these serial numbers; repeat for several"
           },
           {
             "name": "X-API-PASSPHRASE",
