@@ -5549,7 +5549,7 @@
           "statistics"
         ],
         "summary": "Get Dashboard Data",
-        "description": "Consolidated dashboard endpoint - fetches all dashboard data in a single API call.\n\nCombines:\n- All devices with full OS data (eliminates need for individual device fetches)\n- Install statistics (devicesWithErrors, devicesWithWarnings, totalFailedInstalls)\n- Recent events (for dashboard event widget)\n\nThis eliminates 10+ separate API calls from the dashboard, dramatically improving load time.\n\nReturns:\n    {\n        \"devices\": [...],           # Full device list with OS data\n        \"totalDevices\": int,        # Total device count\n        \"installStats\": {...},      # Install error/warning counts\n        \"events\": [...],            # Recent events for widget\n        \"totalEvents\": int,         # Total recent events count\n        \"lastUpdated\": str          # ISO8601 timestamp\n    }",
+        "description": "Consolidated dashboard endpoint - fetches all dashboard data in a single API call.\n\nCombines:\n- All devices with full OS data (eliminates need for individual device fetches)\n- Install statistics (devicesWithErrors, devicesWithWarnings, totalFailedInstalls)\n- Recent events (for dashboard event widget)\n\nThis eliminates 10+ separate API calls from the dashboard, dramatically improving load time.\n\nReturns:\n    {\n        \"devices\": [...],           # Full device list with OS data\n        \"totalDevices\": int,        # Fleet count, stored devices excluded\n        \"storageDevices\": int,      # Devices an inventory says are in storage\n        \"installStats\": {...},      # Install error/warning counts\n        \"events\": [...],            # Recent events for widget\n        \"totalEvents\": int,         # Total recent events count\n        \"lastUpdated\": str          # ISO8601 timestamp\n    }",
         "operationId": "get_dashboard_data_api_v1_dashboard_get",
         "parameters": [
           {
@@ -7892,6 +7892,222 @@
         }
       }
     },
+    "/api/v1/inventory-state": {
+      "get": {
+        "tags": [
+          "inventory-state"
+        ],
+        "summary": "Get Inventory State",
+        "description": "Every device's inventory state, keyed by upper-cased serial number.",
+        "operationId": "get_inventory_state_api_v1_inventory_state_get",
+        "parameters": [
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "inventory-state"
+        ],
+        "summary": "Put Inventory State",
+        "description": "Write inventory states in bulk; ``replace`` makes the payload the whole truth.",
+        "operationId": "put_inventory_state_api_v1_inventory_state_put",
+        "parameters": [
+          {
+            "name": "X-API-PASSPHRASE",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Passphrase"
+            }
+          },
+          {
+            "name": "X-Client-Passphrase",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Passphrase"
+            }
+          },
+          {
+            "name": "X-Internal-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Internal-Secret"
+            }
+          },
+          {
+            "name": "X-MS-CLIENT-PRINCIPAL-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Ms-Client-Principal-Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryStateWrite"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "tags": [
@@ -8165,6 +8381,18 @@
                 "type": "null"
               }
             ]
+          },
+          "inventoryState": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inventorystate"
           }
         },
         "type": "object",
@@ -8458,6 +8686,88 @@
         ],
         "title": "HealthResponse",
         "description": "Response from /api/health."
+      },
+      "InventoryStateEntry": {
+        "properties": {
+          "serialNumber": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Serialnumber"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "checked_out",
+              "storage",
+              "decommissioning"
+            ],
+            "title": "State"
+          },
+          "storageLocation": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Storagelocation"
+          },
+          "leaseNumber": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leasenumber"
+          },
+          "assetTag": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assettag"
+          }
+        },
+        "type": "object",
+        "required": [
+          "serialNumber",
+          "state"
+        ],
+        "title": "InventoryStateEntry"
+      },
+      "InventoryStateWrite": {
+        "properties": {
+          "devices": {
+            "items": {
+              "$ref": "#/components/schemas/InventoryStateEntry"
+            },
+            "type": "array",
+            "title": "Devices"
+          },
+          "replace": {
+            "type": "boolean",
+            "title": "Replace",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "devices"
+        ],
+        "title": "InventoryStateWrite"
       },
       "InventorySummary": {
         "properties": {
