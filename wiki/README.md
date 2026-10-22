@@ -15,7 +15,7 @@ The site uses Astro with static output and Tailwind CSS through the Astro Tailwi
 
 Every page renders inside the shared [Layout](../src/layouts/Layout.astro), which sets the title, description, canonical URL, social card and navigation. Reusable pieces live in [src/components](../src/components): the feature section block, a Mermaid diagram wrapper, and small data-visualisation marks under `dataviz/`.
 
-Module names, one-line summaries and full field lists come from [src/data/modules.js](../src/data/modules.js), which the homepage grid, the features page and the pricing page all import. Change a module's description there rather than in a page.
+Module names, one-line summaries and full field lists come from [src/data/modules.js](../src/data/modules.js), which the homepage grid and the features page both import. Change a module's description there rather than in a page.
 
 The API reference page loads Stoplight Elements from a pinned CDN version and renders [public/openapi.json](../public/openapi.json). Screenshots, icons, the logo and the social card also live in [public](../public) and are served as-is.
 
