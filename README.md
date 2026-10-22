@@ -10,6 +10,8 @@ Source for [reportmate.app](https://reportmate.app) -- the marketing website for
 
 ## Development
 
+Development guide: [wiki](wiki/README.md)
+
 ```bash
 npm install
 npm run dev
